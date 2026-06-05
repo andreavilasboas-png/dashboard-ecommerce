@@ -36,8 +36,8 @@ body { background: #0a0f1e; color: #f1f5f9; font-family: 'Inter', -apple-system,
 .kpi-bar    { height:6px; border-radius:99px; }
 .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-bottom:24px; }
 .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-bottom:24px; }
-.card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:18px 20px; }
-.canal-card { border-radius:14px; padding:16px 18px; margin-bottom:0; }
+.card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:18px 20px; margin-bottom:24px; }
+.canal-card { border-radius:14px; padding:16px 18px; }
 .pag-item { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border-radius:10px; padding:12px 16px; margin-bottom:10px; }
 .pag-dot  { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
 .pag-bar-bg { width:80px; background:rgba(255,255,255,0.06); border-radius:99px; height:5px; }
@@ -61,7 +61,7 @@ table.dados tr:hover td { background:rgba(255,255,255,0.03); }
 <body>
 
 <!-- TELA DE SENHA -->
-<div id="tela-senha" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0a0f1e">
+<div id="tela-senha" style="display:flex;align-items:center;justify-content:center;min-height:100vh">
   <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:40px;width:100%;max-width:380px;text-align:center">
     <div style="font-size:40px;margin-bottom:16px">📊</div>
     <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px">Dashboard E-commerce</div>
@@ -70,10 +70,7 @@ table.dados tr:hover td { background:rgba(255,255,255,0.03); }
       style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;color:#f1f5f9;font-size:14px;outline:none;margin-bottom:12px"
       onkeydown="if(event.key==='Enter')verificarSenha()"/>
     <div id="erro-senha" style="color:#f87171;font-size:12px;margin-bottom:12px;display:none">Senha incorreta. Tente novamente.</div>
-    <button onclick="verificarSenha()"
-      style="width:100%;background:#B91C1C;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">
-      Entrar
-    </button>
+    <button onclick="verificarSenha()" style="width:100%;background:#B91C1C;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Entrar</button>
     <div style="font-size:11px;color:#334155;margin-top:20px">Grupo Oscar · E-commerce · Jun/2026</div>
   </div>
 </div>
@@ -87,17 +84,32 @@ table.dados tr:hover td { background:rgba(255,255,255,0.03); }
   </div>
 </div>
 <div id="main" style="display:none"></div>
+</div>
 
 <script>
 const API_KEY  = "AIzaSyAC0G7Bnnaev84dgzCx6n9GKoKAsFZrFmM";
 const SHEET_ID = "1J7jSMjAbD8RtKbKRzWOaEuy3K-sThifDDS_y7sMLUzw";
 
-// Nomes EXATOS das abas conforme visto na planilha
-const ABAS = {
-  fat:  "Diarização Canal Faturamento",
-  vend: "Diarização Canal Vendas",
-  meta: "Diarização das Metas por Catego",
-  cd:   "Diarização CD das Metas por Catego",
+// Índices das colunas (baseado no mapeamento real da planilha)
+const COL = {
+  DATA: 1,        // B - Data
+  DIA_SEM: 2,     // C - Dia da semana
+  CMV_CD: 4,      // E - CMV Meta CD
+  CMV_LOJAS: 5,   // F - CMV Meta Lojas
+  CMV_GERAL: 6,   // G - CMV Meta Geral
+  MARGEM: 7,      // H - Margem
+  META_GERAL: 11, // L - Meta Geral diarização
+  REAL_ACUM: 13,  // N - Faturamento Realizado Acumulado
+  PCT_ACUM: 14,   // O - % Realizado Acumulado
+  META_CD: 22,    // W - Meta CD
+  REAL_CD: 24,    // Y - Realizado CD
+  PCT_CD: 25,     // Z - % CD
+  META_LOJAS: 38, // AM - Meta Lojas Oscar Geral
+  REAL_LOJAS: 40, // AO - Realizado Lojas Oscar Geral
+  PCT_LOJAS: 42,  // AQ - % Lojas
+  REAL_1P: 58,    // BG - Realizado Total 1P
+  META_1P: 59,    // BH - Meta Total 1P
+  PCT_1P: 60,     // BI - % 1P
 };
 
 const C = { ok:"#16a34a", warn:"#d97706", alert:"#dc2626", primary:"#B91C1C" };
@@ -110,20 +122,25 @@ const corPct = p => p>=100?C.ok:p>=70?C.warn:C.alert;
 
 function parseBRL(v) {
   if(!v) return 0;
-  return parseFloat(String(v).replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0;
+  return parseFloat(String(v).replace(/[R$\s%]/g,"").replace(/\./g,"").replace(",","."))||0;
+}
+
+function parsePct(v) {
+  if(!v) return 0;
+  const n = parseFloat(String(v).replace(/[%\s]/g,"").replace(",","."))||0;
+  // Se veio como decimal (0.7372) converte para percentual
+  return n > 0 && n <= 1 ? n * 100 : n;
 }
 
 function isJun26(v) {
   if(!v) return false;
   const s = String(v).trim();
-  // DD/MM/YYYY ou DD/MM/YY
   if(s.match(/^\d{2}\/\d{2}\/\d{4}$/)) return s.slice(3,5)==="06" && s.slice(6)==="2026";
   if(s.match(/^\d{2}\/\d{2}\/\d{2}$/)) return s.slice(3,5)==="06" && s.slice(6)==="26";
-  // "junho" ou "06/2026"
   return /jun/i.test(s) || s.includes("06/2026");
 }
 
-async function fetchAba(aba, range="A1:Z700") {
+async function fetchAba(aba, range="A1:BZ500") {
   const enc = encodeURIComponent(`'${aba}'!${range}`);
   const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${enc}?key=${API_KEY}`;
   const r = await fetch(url);
@@ -132,14 +149,7 @@ async function fetchAba(aba, range="A1:Z700") {
   return d.values||[];
 }
 
-// Encontra índice de coluna pelo nome (parcial, case-insensitive)
-function findCol(headers, ...termos) {
-  for(const t of termos) {
-    const i = headers.findIndex(h=>String(h).toLowerCase().includes(t.toLowerCase()));
-    if(i>=0) return i;
-  }
-  return -1;
-}
+function setMsg(m) { const el=document.getElementById("loading-msg"); if(el) el.textContent=m; }
 
 async function carregar() {
   document.getElementById("loading").style.display="flex";
@@ -149,124 +159,83 @@ async function carregar() {
 
   try {
     setMsg("Buscando Diarização Canal Faturamento...");
-    const rawFat  = await fetchAba(ABAS.fat);
-    setMsg("Buscando Diarização Canal Vendas...");
-    const rawVend = await fetchAba(ABAS.vend);
-    setMsg("Buscando Metas por Categoria...");
-    const rawMeta = await fetchAba(ABAS.meta);
-    setMsg("Buscando CD das Metas...");
-    const rawCD   = await fetchAba(ABAS.cd);
-    setMsg("Processando dados de Junho/2026...");
+    const rawFat = await fetchAba("Diarização Canal Faturamento");
 
-    // ── Processa aba FATURAMENTO ──────────────────────────────────────
-    // Linha 3 (idx 2) = cabeçalhos reais conforme print
-    // Linhas de dados começam em 599 (~idx 598), col B = data
-    const fatHeaders = rawFat[2] || rawFat[0] || [];
-    const fatRows    = rawFat.slice(3);
+    // Pula linhas de cabeçalho (1,2,3) — dados começam na linha 4 (índice 3)
+    const rows = rawFat.slice(3);
 
-    // Detecta colunas
-    const iData  = findCol(fatHeaders,"dia","data");
-    const iMes   = findCol(fatHeaders,"junho","mês","mes");
-    const iMeta  = findCol(fatHeaders,"meta geral","meta");
-    const iReal  = findCol(fatHeaders,"faturamento realizado","realizado acumulado","realizado");
-    const iPct   = findCol(fatHeaders,"% realizado","atingimento");
-    const iDif   = findCol(fatHeaders,"diferença","gap");
-    const iTM    = findCol(fatHeaders,"ticket medio","ticket médio");
-    const iConv  = findCol(fatHeaders,"tx de conversão","conversão","conversao");
-    const iVend  = findCol(fatHeaders,"venda acumulada","venda");
+    // Filtra junho 2026
+    const junhoRows = rows.filter(r => isJun26(r[COL.DATA]));
+    const dados = junhoRows.length > 0 ? junhoRows : rows.filter(r => r[COL.DATA] && String(r[COL.DATA]).match(/\d{2}\/\d{2}/));
 
-    // Filtra junho/26 — coluna B (idx 1) tem a data baseado no print
-    const junhoFat = fatRows.filter(row => {
-      const d = row[iData>=0?iData:1] || row[1] || "";
-      return isJun26(d);
-    });
+    // Última linha com realizado > 0
+    const comReal = dados.filter(r => parseBRL(r[COL.REAL_ACUM]) > 0);
+    const ultima  = comReal[comReal.length-1] || dados[0] || [];
 
-    const dadosJunho = junhoFat.length > 0 ? junhoFat : fatRows.slice(0,30);
-
-    // Últimos dados disponíveis (última linha com realizado > 0)
-    const comRealizado = dadosJunho.filter(r => parseBRL(r[iReal>=0?iReal:5]) > 0);
-    const ultimaLinha  = comRealizado[comRealizado.length-1] || dadosJunho[0] || [];
-    const dataAtual    = ultimaLinha[iData>=0?iData:1] || "";
-
-    const metaGeral  = parseBRL(ultimaLinha[iMeta>=0?iMeta:4]);
-    const realAcum   = parseBRL(ultimaLinha[iReal>=0?iReal:5]);
-    const pctAtingido= metaGeral>0?(realAcum/metaGeral)*100 : parseBRL(ultimaLinha[iPct>=0?iPct:6]);
+    // KPIs principais da última linha com dado
+    const metaGeral  = parseBRL(ultima[COL.META_GERAL]);
+    const realAcum   = parseBRL(ultima[COL.REAL_ACUM]);
+    const pctAcum    = parsePct(ultima[COL.PCT_ACUM]) || (metaGeral>0?(realAcum/metaGeral)*100:0);
     const falta      = metaGeral - realAcum;
-    const ticketMedio= parseBRL(ultimaLinha[iTM>=0?iTM:13]);
-    const txConv     = ultimaLinha[iConv>=0?iConv:12] || "";
-    const vendAcum   = parseBRL(ultimaLinha[iVend>=0?iVend:11]);
+    const margem     = parsePct(ultima[COL.MARGEM]);
+    const dataAtual  = ultima[COL.DATA] || "";
 
-    // Evolução diária de junho
-    const evolucao = dadosJunho
-      .filter(r => r[iData>=0?iData:1])
+    // CD
+    const metaCD  = parseBRL(ultima[COL.META_CD]);
+    const realCD  = parseBRL(ultima[COL.REAL_CD]);
+    const pctCD   = parsePct(ultima[COL.PCT_CD]) || (metaCD>0?(realCD/metaCD)*100:0);
+
+    // Lojas
+    const metaLojas = parseBRL(ultima[COL.META_LOJAS]);
+    const realLojas = parseBRL(ultima[COL.REAL_LOJAS]);
+    const pctLojas  = parsePct(ultima[COL.PCT_LOJAS]) || (metaLojas>0?(realLojas/metaLojas)*100:0);
+
+    // 1P
+    const meta1P = parseBRL(ultima[COL.META_1P]);
+    const real1P = parseBRL(ultima[COL.REAL_1P]);
+    const pct1P  = parsePct(ultima[COL.PCT_1P]) || (meta1P>0?(real1P/meta1P)*100:0);
+
+    // Canais para o ranking
+    const canais = [
+      { canal:"Geral",        meta:metaGeral, realizado:realAcum,  pct:pctAcum,  gap:realAcum-metaGeral },
+      { canal:"CD",           meta:metaCD,    realizado:realCD,    pct:pctCD,    gap:realCD-metaCD },
+      { canal:"Lojas Oscar",  meta:metaLojas, realizado:realLojas, pct:pctLojas, gap:realLojas-metaLojas },
+      { canal:"1P Total",     meta:meta1P,    realizado:real1P,    pct:pct1P,    gap:real1P-meta1P },
+    ].filter(c => c.meta > 0 || c.realizado > 0);
+
+    // CMV / Margem
+    const cmvCD    = parsePct(ultima[COL.CMV_CD]);
+    const cmvLojas = parsePct(ultima[COL.CMV_LOJAS]);
+    const cmvGeral = parsePct(ultima[COL.CMV_GERAL]);
+
+    // Evolução diária junho
+    const evolucao = dados
+      .filter(r => r[COL.DATA] && (parseBRL(r[COL.META_GERAL])>0 || parseBRL(r[COL.REAL_ACUM])>0))
       .map(r => ({
-        data: String(r[iData>=0?iData:1]).slice(0,5),
-        meta: parseBRL(r[iMeta>=0?iMeta:4]),
-        real: parseBRL(r[iReal>=0?iReal:5]),
-      }))
-      .filter(e => e.meta > 0 || e.real > 0);
+        data: String(r[COL.DATA]).slice(0,5),
+        meta: parseBRL(r[COL.META_GERAL]),
+        real: parseBRL(r[COL.REAL_ACUM]),
+        pct:  parsePct(r[COL.PCT_ACUM]),
+      }));
 
-    // ── Processa aba CANAL VENDAS ─────────────────────────────────────
-    const vendHeaders = rawVend[2] || rawVend[0] || [];
-    const vendRows    = rawVend.slice(3);
-    const junhoVend   = vendRows.filter(r => isJun26(r[1]||r[0]||""));
-    const dadosVend   = junhoVend.length>0 ? junhoVend : vendRows.slice(0,30);
+    // Pagamento (fixo do PDF — virá da planilha se tiver aba específica)
+    const PAGAMENTO = [
+      {name:"Cartão Crédito",pct:37.09,cor:CORES[0]},
+      {name:"FestCard",      pct:26.06,cor:CORES[1]},
+      {name:"Pix",           pct:22.28,cor:CORES[2]},
+      {name:"Credsystem",    pct:5.01, cor:CORES[3]},
+      {name:"Vale",          pct:3.11, cor:CORES[4]},
+      {name:"Outros",        pct:6.45, cor:CORES[5]},
+    ];
 
-    // Agrupa canais
-    const iCanalV = findCol(vendHeaders,"canal","nome");
-    const iMetaV  = findCol(vendHeaders,"meta");
-    const iRealV  = findCol(vendHeaders,"realizado","real");
-    const canaisMap = {};
-    dadosVend.forEach(r=>{
-      const canal = r[iCanalV>=0?iCanalV:0]||"";
-      if(canal.length<2 || /^\d/.test(canal)) return;
-      const m = parseBRL(r[iMetaV>=0?iMetaV:3]);
-      const v = parseBRL(r[iRealV>=0?iRealV:4]);
-      if(!canaisMap[canal]) canaisMap[canal]={meta:0,real:0};
-      canaisMap[canal].meta += m;
-      canaisMap[canal].real += v;
-    });
-
-    let canais = Object.entries(canaisMap)
-      .map(([c,v])=>({canal:c,meta:v.meta,realizado:v.real,pct:v.meta>0?(v.real/v.meta)*100:0,gap:v.real-v.meta}))
-      .filter(c=>c.meta>0||c.realizado>0);
-
-    // Fallback com dados reais do PDF se planilha não retornar canais
-    if(canais.length < 2) {
-      canais = [
-        {canal:"1P Digital Puro",   meta:2520000, realizado:44269,  pct:10.98, gap:-2475731},
-        {canal:"3P Marketplace Out", meta:1282995, realizado:80293,  pct:39.11, gap:-1202702},
-        {canal:"1P Omni (Lojas Hubs)",meta:1252373,realizado:471767, pct:235.44,gap:219394},
-        {canal:"APP",               meta:505500,  realizado:56834,  pct:70.27, gap:-148666},
-        {canal:"3.0 ECOM",          meta:1130693, realizado:164359, pct:90.83, gap:-103669},
-        {canal:"3.0 LOJAS",         meta:1650694, realizado:164359, pct:62.23, gap:-622940},
-      ];
-    }
-
-    // ── Processa METAS POR CATEGORIA ─────────────────────────────────
-    const metaHeaders = rawMeta[2]||rawMeta[0]||[];
-    const metaRows    = rawMeta.slice(3);
-    const junhoMeta   = metaRows.filter(r=>isJun26(r[1]||r[0]||""));
-    const dadosMeta   = junhoMeta.length>0?junhoMeta:metaRows.slice(0,20);
-
-    const iCatNome = findCol(metaHeaders,"categoria","nome","descrição","descricao");
-    const iCatMeta = findCol(metaHeaders,"meta");
-    const iCatReal = findCol(metaHeaders,"realizado","real");
-    const categorias = [];
-    dadosMeta.slice(0,10).forEach(r=>{
-      const nome = r[iCatNome>=0?iCatNome:0]||"";
-      if(nome.length<2||/^\d/.test(nome)) return;
-      const m = parseBRL(r[iCatMeta>=0?iCatMeta:3]);
-      const v = parseBRL(r[iCatReal>=0?iCatReal:4]);
-      if(m>0||v>0) categorias.push({nome,meta:m,real:v,pct:m>0?(v/m)*100:0});
-    });
-
-    // ── Render ────────────────────────────────────────────────────────
     renderDashboard({
-      dataAtual, metaGeral, realAcum, pctAtingido, falta,
-      ticketMedio, txConv, vendAcum,
-      evolucao, canais, categorias,
-      totalRows: dadosJunho.length,
+      dataAtual, metaGeral, realAcum, pctAcum, falta,
+      margem, cmvCD, cmvLojas, cmvGeral,
+      metaCD, realCD, pctCD,
+      metaLojas, realLojas, pctLojas,
+      meta1P, real1P, pct1P,
+      canais, evolucao, PAGAMENTO,
+      totalDias: dados.length,
     });
 
   } catch(e) {
@@ -277,56 +246,47 @@ async function carregar() {
         <div style="font-size:40px">⚠️</div>
         <div style="color:#f87171;font-size:15px;font-weight:700">Erro ao carregar dados</div>
         <div style="color:#94a3b8;font-size:13px;max-width:460px;line-height:1.6">${e.message}</div>
-        <div style="color:#64748b;font-size:12px;max-width:460px">Verifique se a planilha está compartilhada como "Qualquer pessoa com o link"</div>
         <button class="btn" onclick="carregar()">↻ Tentar novamente</button>
       </div>`;
   }
 }
 
-function setMsg(m) { document.getElementById("loading-msg").textContent=m; }
-
 function renderDashboard(d) {
   const hoje = new Date().toLocaleDateString("pt-BR");
-  const {dataAtual,metaGeral,realAcum,pctAtingido,falta,ticketMedio,txConv,evolucao,canais,categorias} = d;
-  const corTotal = corPct(pctAtingido);
+  const { dataAtual, metaGeral, realAcum, pctAcum, falta,
+          margem, cmvCD, cmvLojas, cmvGeral,
+          metaCD, realCD, pctCD,
+          metaLojas, realLojas, pctLojas,
+          meta1P, real1P, pct1P,
+          canais, evolucao, PAGAMENTO } = d;
 
-  const GMV_OSCAR   = {meta:808858.93, real:596329.42, pct:73.72};
-  const GMV_DIADORA = {meta:60480,     real:24096.46,  pct:39.84};
-  const PAGAMENTO   = [
-    {name:"Cartão Crédito",pct:37.09,cor:CORES[0]},
-    {name:"FestCard",      pct:26.06,cor:CORES[1]},
-    {name:"Pix",           pct:22.28,cor:CORES[2]},
-    {name:"Credsystem",    pct:5.01, cor:CORES[3]},
-    {name:"Vale",          pct:3.11, cor:CORES[4]},
-    {name:"Outros",        pct:6.45, cor:CORES[5]},
-  ];
-  const MARGEM = [
-    {canal:"Geral",       cmv:42.43,mb:57.57},
-    {canal:"1P Digital",  cmv:42.54,mb:57.46},
-    {canal:"1P Omni",     cmv:42.40,mb:57.60},
-  ];
+  const corTotal = corPct(pctAcum);
 
-  const alertaHTML = (() => {
-    const crit = canais.filter(c=>c.pct<50);
-    const atenc = canais.filter(c=>c.pct>=50&&c.pct<80);
-    const dest  = canais.filter(c=>c.pct>=100);
-    return `<div class="alerta">
-      <div class="alerta-titulo">🔔 Inteligência do Dia · ${dataAtual||hoje}</div>
-      <div class="alerta-grid">
-        ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)} (gap ${fmtBRL(c.gap)})</div>`).join("")}</div>`:""}
-        ${atenc.length?`<div><div style="color:#fbbf24;font-weight:700;font-size:11px;margin-bottom:4px">⚠️ ATENÇÃO — entre 50% e 80%</div>${atenc.map(c=>`<div style="color:#fde68a;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)}</div>`).join("")}</div>`:""}
-        ${dest.length?`<div><div style="color:#4ade80;font-weight:700;font-size:11px;margin-bottom:4px">✅ ACIMA DA META</div>${dest.map(c=>`<div style="color:#86efac;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)}</div>`).join("")}</div>`:""}
-      </div>
-    </div>`;
-  })();
+  // Alerta inteligente
+  const crit  = canais.filter(c=>c.pct<50);
+  const atenc = canais.filter(c=>c.pct>=50&&c.pct<80);
+  const dest  = canais.filter(c=>c.pct>=100);
+
+  const alertaHTML = `<div class="alerta">
+    <div class="alerta-titulo">🔔 Inteligência do Dia · ${dataAtual}</div>
+    <div class="alerta-grid">
+      ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)} (gap ${fmtBRL(c.gap)})</div>`).join("")}</div>`:""}
+      ${atenc.length?`<div><div style="color:#fbbf24;font-weight:700;font-size:11px;margin-bottom:4px">⚠️ ATENÇÃO — entre 50% e 80%</div>${atenc.map(c=>`<div style="color:#fde68a;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)}</div>`).join("")}</div>`:""}
+      ${dest.length?`<div><div style="color:#4ade80;font-weight:700;font-size:11px;margin-bottom:4px">✅ ACIMA DA META</div>${dest.map(c=>`<div style="color:#86efac;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)}</div>`).join("")}</div>`:""}
+    </div>
+  </div>`;
 
   function kpi(icon,label,val,sub,pct,cor) {
-    const c=cor||corPct(pct||0);
+    const c=cor||(pct!==undefined?corPct(pct):"#e2e8f0");
     return `<div class="kpi">
       <div class="kpi-label">${icon} ${label}</div>
       <div class="kpi-value" style="color:${c}">${val}</div>
       ${sub?`<div class="kpi-sub">${sub}</div>`:""}
-      ${pct!==undefined?`<div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px"><span>Atingimento</span><span style="color:${corPct(pct)};font-weight:700">${fmtPct(pct)}</span></div><div class="kpi-bar-bg"><div class="kpi-bar" style="width:${Math.min(pct,100)}%;background:${corPct(pct)}"></div></div>`:""}
+      ${pct!==undefined?`
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px">
+          <span>Atingimento</span><span style="color:${corPct(pct)};font-weight:700">${fmtPct(pct)}</span>
+        </div>
+        <div class="kpi-bar-bg"><div class="kpi-bar" style="width:${Math.min(pct,100)}%;background:${corPct(pct)}"></div></div>`:""}
     </div>`;
   }
 
@@ -342,7 +302,9 @@ function renderDashboard(d) {
         <div><div style="font-size:10px;color:#64748b">REALIZADO</div><div style="font-size:12px;font-weight:600;color:#e2e8f0">${fmtBRL(c.realizado)}</div></div>
         <div><div style="font-size:10px;color:#64748b">GAP</div><div style="font-size:12px;font-weight:600;color:${c.gap>=0?C.ok:C.alert}">${c.gap>=0?"+":""}${fmtBRL(c.gap)}</div></div>
       </div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px"><div style="width:${Math.min(c.pct,100)}%;height:5px;border-radius:99px;background:${cor}"></div></div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px">
+        <div style="width:${Math.min(c.pct,100)}%;height:5px;border-radius:99px;background:${cor}"></div>
+      </div>
     </div>`;
   }
 
@@ -350,7 +312,7 @@ function renderDashboard(d) {
   <div class="topo">
     <div>
       <div class="titulo">📊 Dashboard E-commerce · Grupo Oscar</div>
-      <div class="sub">Atualizado em ${hoje} · Ref. ${dataAtual||"Junho/2026"} · 4 abas monitoradas</div>
+      <div class="sub">Ref. ${dataAtual} · Junho/2026 · Atualizado em ${hoje}</div>
     </div>
     <div class="badges">
       <span class="badge badge-green">✓ Google Sheets Live</span>
@@ -371,44 +333,46 @@ function renderDashboard(d) {
 
   <!-- GERAL -->
   <div class="section active" id="sec-geral">
-    <div class="sec-label">Visão Geral · Junho 2026</div>
+    <div class="sec-label">Visão Geral · Acumulado até ${dataAtual}</div>
     <div class="grid-kpi">
-      ${kpi("🎯","GMV Realizado",fmtBRL(realAcum),`Meta: ${fmtBRL(metaGeral)}`,pctAtingido,corTotal)}
-      ${kpi("⚡","Falta para Meta",fmtBRL(falta),falta<=0?"🟢 Meta batida!":"Restante para 100%",undefined,falta<=0?C.ok:C.alert)}
-      ${kpi("📦","GMV Grupo Oscar",fmtBRL(GMV_OSCAR.real),`Meta: ${fmtBRL(GMV_OSCAR.meta)}`,GMV_OSCAR.pct)}
-      ${kpi("🏷️","GMV Diadora",fmtBRL(GMV_DIADORA.real),`Meta: ${fmtBRL(GMV_DIADORA.meta)}`,GMV_DIADORA.pct)}
-      ${kpi("📊","% Atingimento",fmtPct(pctAtingido),`Gap: ${pctAtingido>=100?"+":"−"}${fmtPct(Math.abs(100-pctAtingido))}`,undefined,corTotal)}
-      ${ticketMedio>0?kpi("🎫","Ticket Médio",fmtBRL(ticketMedio),"Acumulado junho",undefined,"#a5b4fc"):kpi("🏪","Canais OK",canais.filter(c=>c.pct>=100).length+"/"+canais.length,"canais acima da meta",undefined,"#a5b4fc")}
+      ${kpi("🎯","GMV Realizado Acumulado",fmtBRL(realAcum),`Meta: ${fmtBRL(metaGeral)}`,pctAcum,corTotal)}
+      ${kpi("⚡","Falta para Bater a Meta",fmtBRL(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante para 100%",undefined,falta<=0?C.ok:C.alert)}
+      ${kpi("🏪","GMV CD Acumulado",fmtBRL(realCD),`Meta: ${fmtBRL(metaCD)}`,pctCD)}
+      ${kpi("🏬","GMV Lojas Oscar",fmtBRL(realLojas),`Meta: ${fmtBRL(metaLojas)}`,pctLojas)}
+      ${kpi("📦","Total 1P",fmtBRL(real1P),`Meta: ${fmtBRL(meta1P)}`,pct1P)}
+      ${kpi("📊","% Atingimento Geral",fmtPct(pctAcum),`Gap: ${pctAcum>=100?"+":"−"}${fmtPct(Math.abs(100-pctAcum))}`,undefined,corTotal)}
     </div>
 
-    <div class="sec-label">GMV · Grupo Oscar vs Diadora</div>
-    <div class="card" style="margin-bottom:24px"><div style="height:200px"><canvas id="chartGMV"></canvas></div></div>
-
     <div class="sec-label">Evolução Diária · Meta vs Realizado · Junho</div>
-    <div class="card" style="margin-bottom:24px"><div style="height:230px"><canvas id="chartEvol"></canvas></div></div>
+    <div class="card"><div style="height:230px"><canvas id="chartEvol"></canvas></div></div>
+
+    <div class="sec-label">Meta vs Realizado por Canal</div>
+    <div class="card"><div style="height:220px"><canvas id="chartCanais"></canvas></div></div>
   </div>
 
   <!-- CANAIS -->
   <div class="section" id="sec-canais">
-    <div class="sec-label">Ranking de Atingimento por Canal</div>
-    <div class="card" style="margin-bottom:20px"><div style="height:${canais.length*46+30}px"><canvas id="chartRank"></canvas></div></div>
+    <div class="sec-label">Ranking de Atingimento</div>
+    <div class="card"><div style="height:${canais.length*50+30}px"><canvas id="chartRank"></canvas></div></div>
     <div class="sec-label">Performance Detalhada</div>
     <div class="grid-2">${canais.map(canalCard).join("")}</div>
   </div>
 
   <!-- MARGEM -->
   <div class="section" id="sec-margem">
-    <div class="sec-label">CMV · Margem Bruta por Canal</div>
+    <div class="sec-label">CMV · Margem Bruta · Acumulado ${dataAtual}</div>
     <div class="grid-3">
-      ${MARGEM.map(m=>`<div class="card">
-        <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:12px">${m.canal}</div>
-        <div style="display:flex;gap:16px;margin-bottom:12px">
-          <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${C.alert}">${fmtPct(m.cmv)}</div></div>
-          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${C.ok}">${fmtPct(m.mb)}</div></div>
+      ${[
+        {label:"Geral",      cmv:cmvGeral, mb: cmvGeral>0?100-cmvGeral:57.57},
+        {label:"CD",         cmv:cmvCD,    mb: cmvCD>0?100-cmvCD:57.46},
+        {label:"Lojas Oscar",cmv:cmvLojas, mb: cmvLojas>0?100-cmvLojas:57.60},
+      ].map(m=>`<div class="kpi">
+        <div class="kpi-label">${m.label}</div>
+        <div style="display:flex;gap:16px;margin:8px 0">
+          <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${C.alert}">${fmtPct(m.cmv||42.43)}</div></div>
+          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${C.ok}">${fmtPct(m.mb||57.57)}</div></div>
         </div>
-        <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:8px;overflow:hidden">
-          <div style="width:${m.mb}%;height:100%;background:linear-gradient(90deg,${C.ok},#4ade80);border-radius:99px"></div>
-        </div>
+        <div class="kpi-bar-bg"><div class="kpi-bar" style="width:${m.mb||57.57}%;background:${C.ok}"></div></div>
       </div>`).join("")}
     </div>
     <div class="sec-label">CMV vs Margem Bruta</div>
@@ -417,9 +381,9 @@ function renderDashboard(d) {
 
   <!-- PAGAMENTO -->
   <div class="section" id="sec-pagamento">
-    <div class="sec-label">Mix de Meios de Pagamento · Junho 2026</div>
+    <div class="sec-label">Mix de Meios de Pagamento</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
-      <div class="card"><div style="height:280px"><canvas id="chartPag"></canvas></div></div>
+      <div class="card" style="margin-bottom:0"><div style="height:280px"><canvas id="chartPag"></canvas></div></div>
       <div>
         ${PAGAMENTO.map(p=>`<div class="pag-item">
           <div class="pag-dot" style="background:${p.cor}"></div>
@@ -427,26 +391,25 @@ function renderDashboard(d) {
           <div style="font-size:16px;font-weight:700;color:${p.cor}">${p.pct}%</div>
           <div class="pag-bar-bg"><div class="pag-bar" style="width:${p.pct}%;background:${p.cor}"></div></div>
         </div>`).join("")}
-        <div class="insight-box">💡 <strong>Cartão + FestCard</strong> = <strong>${(37.09+26.06).toFixed(1)}%</strong> dos pagamentos<br>Pix em <strong>3º lugar</strong> com 22,28%</div>
+        <div class="insight-box">💡 <strong>Cartão + FestCard</strong> = <strong>${(37.09+26.06).toFixed(1)}%</strong> dos pagamentos<br>Pix em 3º com <strong>22,28%</strong></div>
       </div>
     </div>
   </div>
 
   <!-- TABELA -->
   <div class="section" id="sec-tabela">
-    <div class="sec-label">Dados Diários · Junho 2026 · ${evolucao.length} registros</div>
+    <div class="sec-label">Diarização · Junho 2026 · ${evolucao.length} dias</div>
     <div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
       <table class="dados">
-        <thead><tr><th>Data</th><th>Meta Diária</th><th>Realizado</th><th>% Atingido</th><th>GAP</th></tr></thead>
+        <thead><tr><th>Data</th><th>Meta Geral</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP</th></tr></thead>
         <tbody>
           ${evolucao.map(e=>{
-            const pct=e.meta>0?(e.real/e.meta)*100:0;
             const gap=e.real-e.meta;
             return `<tr>
               <td>${e.data}</td>
               <td>${fmtBRL(e.meta)}</td>
               <td>${fmtBRL(e.real)}</td>
-              <td style="color:${corPct(pct)};font-weight:700">${fmtPct(pct)}</td>
+              <td style="color:${corPct(e.pct)};font-weight:700">${fmtPct(e.pct)}</td>
               <td style="color:${gap>=0?C.ok:C.alert}">${gap>=0?"+":""}${fmtBRL(gap)}</td>
             </tr>`;
           }).join("")}
@@ -469,15 +432,6 @@ function renderDashboard(d) {
             y:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}}}
   };
 
-  // GMV
-  charts.gmv = new Chart(document.getElementById("chartGMV"),{type:"bar",
-    data:{labels:["Grupo Oscar","Diadora"],datasets:[
-      {label:"Meta",     data:[GMV_OSCAR.meta, GMV_DIADORA.meta], backgroundColor:"#334155",borderRadius:4},
-      {label:"Realizado",data:[GMV_OSCAR.real, GMV_DIADORA.real], backgroundColor:"#B91C1C",borderRadius:4}
-    ]},
-    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>fmtBRL(v)}}}}
-  });
-
   // Evolução
   if(evolucao.length>0) {
     charts.evol = new Chart(document.getElementById("chartEvol"),{type:"bar",
@@ -485,28 +439,39 @@ function renderDashboard(d) {
         {label:"Meta",     data:evolucao.map(e=>e.meta), backgroundColor:"#334155",borderRadius:3},
         {label:"Realizado",data:evolucao.map(e=>e.real), backgroundColor:"#B91C1C",borderRadius:3}
       ]},
-      options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>`${(v/1000).toFixed(0)}k`}}}}
+      options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>fmtBRL(v)}}}}
     });
   }
 
-  // Ranking canais
+  // Canais meta vs real
+  charts.canais = new Chart(document.getElementById("chartCanais"),{type:"bar",
+    data:{labels:canais.map(c=>c.canal),datasets:[
+      {label:"Meta",     data:canais.map(c=>c.meta),      backgroundColor:"#334155",borderRadius:4},
+      {label:"Realizado",data:canais.map(c=>c.realizado),  backgroundColor:"#B91C1C",borderRadius:4}
+    ]},
+    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>fmtBRL(v)}}}}
+  });
+
+  // Ranking
   const sorted = [...canais].sort((a,b)=>b.pct-a.pct);
   charts.rank = new Chart(document.getElementById("chartRank"),{type:"bar",
-    data:{labels:sorted.map(c=>c.canal.length>22?c.canal.slice(0,22)+"…":c.canal),
+    data:{labels:sorted.map(c=>c.canal),
           datasets:[{label:"% Atingido",data:sorted.map(c=>+c.pct.toFixed(1)),
             backgroundColor:sorted.map(c=>corPct(c.pct)),borderRadius:4}]},
     options:{...baseOpts,indexAxis:"y",
       scales:{x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,callback:v=>`${v}%`}},
-              y:{...baseOpts.scales.y,ticks:{color:"#94a3b8",font:{size:11}}}}}
+              y:{...baseOpts.scales.y,ticks:{color:"#94a3b8",font:{size:12}}}}}
   });
 
   // Margem
+  const mCMV = [cmvGeral||42.43, cmvCD||42.54, cmvLojas||42.40];
+  const mMB  = mCMV.map(v=>+(100-v).toFixed(2));
   charts.marg = new Chart(document.getElementById("chartMargem"),{type:"bar",
-    data:{labels:["Geral","1P Digital Puro","1P Omni"],datasets:[
-      {label:"CMV",         data:[42.43,42.54,42.40],backgroundColor:C.alert,borderRadius:4},
-      {label:"Margem Bruta",data:[57.57,57.46,57.60],backgroundColor:C.ok,   borderRadius:4}
+    data:{labels:["Geral","CD","Lojas Oscar"],datasets:[
+      {label:"CMV",         data:mCMV, backgroundColor:C.alert,borderRadius:4},
+      {label:"Margem Bruta",data:mMB,  backgroundColor:C.ok,   borderRadius:4}
     ]},
-    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>`${v}%`}}}}
+    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,max:100,ticks:{...baseOpts.scales.y.ticks,callback:v=>`${v}%`}}}}
   });
 
   // Pagamento
@@ -524,21 +489,17 @@ function showTab(t) {
     document.getElementById(`sec-${s}`).className="section"+(s===t?" active":"");
     document.getElementById(`tab-${s}`).className="tab "+(s===t?"active":"inactive");
   });
-  // Redesenha charts ao trocar aba
   setTimeout(()=>Object.values(charts).forEach(c=>c&&c.resize&&c.resize()),50);
 }
 
-carregar();
-</script>
-</div><!-- fim dashboard-wrapper -->
-
-<script>
+// Senha
 function verificarSenha() {
   const senha = document.getElementById("input-senha").value;
   if(senha === "oscar@ecom26") {
     document.getElementById("tela-senha").style.display = "none";
     document.getElementById("dashboard-wrapper").style.display = "block";
     sessionStorage.setItem("auth","ok");
+    carregar();
   } else {
     document.getElementById("erro-senha").style.display = "block";
     document.getElementById("input-senha").value = "";
@@ -548,6 +509,7 @@ function verificarSenha() {
 if(sessionStorage.getItem("auth")==="ok") {
   document.getElementById("tela-senha").style.display = "none";
   document.getElementById("dashboard-wrapper").style.display = "block";
+  carregar();
 }
 </script>
 </body>
