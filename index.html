@@ -132,24 +132,45 @@ async function load(){
     // Busca cada célula pelo endereço exato (verificado no Excel)
     msg("Buscando totais de faturamento...");
     const [
-      metaG, realG, pctGraw,
-      cmvCD, cmvLojas, cmvGeral,
-      metaCD, realCD,
-      metaOUT, realOUT,
-      metaLojas, realLojas,
-      meta1P, real1P,
+      // Meta total mês (linha 598) e meta acumulada até o dia (linha 596)
+      metaG,    metaGacum,   // I598=meta mês, M596=meta acum até dia
+      realG,    pctGraw,     // K598=realizado, L598=%
+      cmvCD,    cmvLojas,    cmvGeral,
+      // CD: meta acum W596, meta mês T598, real V598
+      metaCDacum, metaCD, realCD,
+      // OUT: meta acum AE596, meta mês AB598, real AD598
+      metaOUTacum, metaOUT, realOUT,
+      // Lojas Omni: meta acum AM596, meta mês AJ598, real AL598
+      metaLojasAcum, metaLojas, realLojas,
+      // 1P Total: meta acum BH596, meta mês BE598, real BG598
+      meta1Pacum, meta1P, real1P,
     ] = await Promise.all([
-      G(FAT,"I598"), G(FAT,"K598"), G(FAT,"L598"),
+      G(FAT,"I598"), G(FAT,"M596"),
+      G(FAT,"K598"), G(FAT,"L598"),
       G(FAT,"E598"), G(FAT,"F598"), G(FAT,"G598"),
-      G(FAT,"T598"), G(FAT,"V598"),
-      G(FAT,"AB598"), G(FAT,"AD598"),
-      G(FAT,"AJ598"), G(FAT,"AL598"),
-      G(FAT,"BE598"), G(FAT,"BG598"),
+      G(FAT,"W596"),  G(FAT,"T598"), G(FAT,"V598"),
+      G(FAT,"AE596"), G(FAT,"AB598"), G(FAT,"AD598"),
+      G(FAT,"AM596"), G(FAT,"AJ598"), G(FAT,"AL598"),
+      G(FAT,"BH596"), G(FAT,"BE598"), G(FAT,"BG598"),
     ]);
 
-    const mG=$N(metaG);   // 5.055.368,33
-    const rG=$N(realG);   // 596.329,42
-    const pG=$P(pctGraw)||(mG>0?(rG/mG)*100:0); // 11,80%
+    const mG=$N(metaG);           // 5.055.368,33 — meta total mês
+    const mGa=$N(metaGacum);      // 808.858,93 — meta acumulada até o dia
+    const rG=$N(realG);           // 596.329,42 — realizado acumulado
+    const pG=$P(pctGraw)||(mG>0?(rG/mG)*100:0);   // % vs meta mês
+    const pGa=mGa>0?(rG/mGa)*100:0;               // 73,7% vs meta até o dia ✅
+    const mCDa=$N(metaCDacum);    // 403.200 — meta CD acumulada
+    const mCD=$N(metaCD); const rCD=$N(realCD);    // meta mês CD vs realizado
+    const pCDa=mCDa>0?(rCD/mCDa)*100:0;           // 11,0% ✅
+    const mOUTa=$N(metaOUTacum);  // 205.279
+    const mOUT=$N(metaOUT); const rOUT=$N(realOUT);
+    const pOUTa=mOUTa>0?(rOUT/mOUTa)*100:0;       // 39,1% ✅
+    const mLa=$N(metaLojasAcum);  // 200.379
+    const mL=$N(metaLojas); const rL=$N(realLojas);
+    const pLa=mLa>0?(rL/mLa)*100:0;               // 235,4% ✅
+    const m1Pa=$N(meta1Pacum);    // 603.579
+    const m1P=$N(meta1P); const r1P=$N(real1P);
+    const p1Pa=m1Pa>0?(r1P/m1Pa)*100:0;           // 85,5% ✅
     const mCD=$N(metaCD); const rCD=$N(realCD);
     const mOUT=$N(metaOUT); const rOUT=$N(realOUT);
     const mL=$N(metaLojas); const rL=$N(realLojas);
@@ -157,24 +178,25 @@ async function load(){
 
     // ══ CANAL VENDAS — linha 601 = totais junho ═════════════════════
     msg("Buscando totais de vendas...");
+    // Canal Vendas: meta acumulada até o dia (linha 599) vs realizado (linha 601)
     const [
-      metaVG, realVG, pctVGraw,
-      metaLojasG, realLojasG,
-      realLojasO,
-      metaOUTV, realOUTV,
-      metaApp, realApp,
-      metaSite, realSite,
-      metaPaq, realPaq,
-      metaDia, realDia,
+      metaVGacum, realVG,                        // I599=meta acum, G601=realizado
+      metaLGacum, realLojasG,                    // AE599=meta acum lojas, AC601=real
+      realLojasO,                                // AD601=real lojas omni
+      metaOUTVacum, realOUTV,                    // BD599=meta acum OUT, BC601=real
+      metaAppAcum, realApp,                      // BK599=meta acum app, BJ601=real
+      metaSiteAcum, realSite,                    // BR599=meta acum site, BQ601=real
+      metaPaqAcum, realPaq,                      // BY599=meta acum paquetá, BX601=real
+      metaDiaAcum, realDia,                      // CF599=meta acum diadora, CL601=real
     ] = await Promise.all([
-      G(VEND,"E601"), G(VEND,"G601"), G(VEND,"H601"),
-      G(VEND,"AA601"), G(VEND,"AC601"),
+      G(VEND,"I599"),  G(VEND,"G601"),
+      G(VEND,"AE599"), G(VEND,"AC601"),
       G(VEND,"AD601"),
-      G(VEND,"AY601"), G(VEND,"BC601"),
-      G(VEND,"BH601"), G(VEND,"BJ601"),
-      G(VEND,"BO601"), G(VEND,"BQ601"),
-      G(VEND,"BV601"), G(VEND,"BX601"),
-      G(VEND,"CJ601"), G(VEND,"CL601"),
+      G(VEND,"BD599"), G(VEND,"BC601"),
+      G(VEND,"BK599"), G(VEND,"BJ601"),
+      G(VEND,"BR599"), G(VEND,"BQ601"),
+      G(VEND,"BY599"), G(VEND,"BX601"),
+      G(VEND,"CF599"), G(VEND,"CL601"),
     ]);
 
     const mVG=$N(metaVG); const rVG=$N(realVG);
@@ -216,10 +238,10 @@ async function load(){
 
     // Canais faturamento
     const canaisFat=[
-      {canal:"CD",         meta:mCD,  real:rCD,  pct:mCD>0?(rCD/mCD)*100:0},
-      {canal:"OUT Marketp",meta:mOUT, real:rOUT, pct:mOUT>0?(rOUT/mOUT)*100:0},
-      {canal:"Lojas Omni", meta:mL,   real:rL,   pct:mL>0?(rL/mL)*100:0},
-      {canal:"1P Total",   meta:m1P,  real:r1P,  pct:m1P>0?(r1P/m1P)*100:0},
+      {canal:"CD",         meta:mCDa,  real:rCD,  pct:pCDa},
+      {canal:"OUT Marketp",meta:mOUTa, real:rOUT, pct:pOUTa},
+      {canal:"Lojas Omni", meta:mLa,   real:rL,   pct:pLa},
+      {canal:"1P Total",   meta:m1Pa,  real:r1P,  pct:p1Pa},
     ].map(c=>({...c,gap:c.real-c.meta})).filter(c=>c.meta>0||c.real>0);
 
     // Canais vendas
@@ -253,7 +275,7 @@ async function load(){
     const cmvCD_pct=$P(cmvCD)||42.54;
     const cmvL_pct=$P(cmvLojas)||42.40;
 
-    render({dataRef,mG,rG,pG,mCD,rCD,mOUT,rOUT,mL,rL,m1P,r1P,
+    render({dataRef,mG,mGa,rG,pG,pGa,mCDa,rCD,pCDa,mOUTa,rOUT,pOUTa,mLa,rL,pLa,m1Pa,r1P,p1Pa,mVGa,rVG,pVGa,
             cmvG_pct,cmvCD_pct,cmvL_pct,mVG,rVG,pVG,
             canaisFat,canaisVendas,evolF,evolV,PAG});
 
@@ -297,7 +319,7 @@ function cCard(c){
 
 function render(d){
   const hoje=new Date().toLocaleDateString("pt-BR");
-  const{dataRef,mG,rG,pG,mCD,rCD,mOUT,rOUT,mL,rL,m1P,r1P,
+  const{dataRef,mG,mGa,rG,pG,pGa,mCDa,rCD,pCDa,mOUTa,rOUT,pOUTa,mLa,rL,pLa,m1Pa,r1P,p1Pa,mVGa,rVG,pVGa,
         cmvG_pct,cmvCD_pct,cmvL_pct,mVG,rVG,pVG,
         canaisFat,canaisVendas,evolF,evolV,PAG}=d;
   const falta=mG-rG;
@@ -340,12 +362,13 @@ function render(d){
   <div class="sec on" id="s-fat">
     <div class="sl">GMV Faturamento · Acumulado Junho 2026</div>
     <div class="g3">
-      ${kpi("🎯","GMV Realizado",R(rG),`Meta: ${R(mG)}`,pG)}
-      ${kpi("⚡","Falta p/ Meta",R(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante p/ 100%",undefined,falta<=0?OK:ER)}
-      ${kpi("📊","% Atingimento",P(pG),`Gap: ${P(pG-100)}`,undefined,CR(pG))}
-      ${kpi("📦","CD",R(rCD),`Meta: ${R(mCD)}`,mCD>0?(rCD/mCD)*100:0)}
-      ${kpi("🏬","Lojas Omni",R(rL),`Meta: ${R(mL)}`,mL>0?(rL/mL)*100:0)}
-      ${kpi("🛒","1P Total",R(r1P),`Meta: ${R(m1P)}`,m1P>0?(r1P/m1P)*100:0)}
+      ${kpi("📅","Realizado até "+dataRef,R(rG),`Meta até ${dataRef}: ${R(mGa)}`,pGa)}
+      ${kpi("⚡","Falta até "+dataRef,R(Math.abs(mGa-rG)),mGa<=rG?"🟢 À frente!":"Restante",undefined,mGa<=rG?OK:ER)}
+      ${kpi("📊","% vs Meta até "+dataRef,P(pGa),"Comparação justa dia a dia",undefined,CR(pGa))}
+      ${kpi("🎯","Meta Total Mês",R(mG),`Realizado: ${P(pG)} do mês`,pG)}
+      ${kpi("📦","CD",R(rCD),`Meta até ${dataRef}: ${R(mCDa)}`,pCDa)}
+      ${kpi("🏬","Lojas Omni",R(rL),`Meta até ${dataRef}: ${R(mLa)}`,pLa)}
+      ${kpi("🛒","1P Total",R(r1P),`Meta até ${dataRef}: ${R(m1Pa)}`,p1Pa)}
     </div>
     <div class="sl">Evolução Diária · Meta vs Realizado</div>
     <div class="card"><div style="height:240px"><canvas id="cEvF"></canvas></div></div>
@@ -359,9 +382,9 @@ function render(d){
   <div class="sec" id="s-vend">
     <div class="sl">Canal Vendas · Acumulado Junho 2026</div>
     <div class="g3">
-      ${kpi("🛒","GMV Vendas",R(rVG),`Meta: ${R(mVG)}`,pVG)}
-      ${kpi("⚡","Falta p/ Meta",R(Math.abs(mVG-rVG)),mVG<=rVG?"🟢 Meta batida!":"Restante",undefined,mVG<=rVG?OK:ER)}
-      ${kpi("📊","% Atingimento",P(pVG),`Gap: ${P(pVG-100)}`,undefined,CR(pVG))}
+      ${kpi("🛒","Vendas até "+dataRef,R(rVG),`Meta até ${dataRef}: ${R(mVGa)}`,pVGa)}
+      ${kpi("⚡","Falta p/ Meta",R(Math.abs(mVGa-rVG)),mVGa<=rVG?"🟢 À frente!":"Restante",undefined,mVGa<=rVG?OK:ER)}
+      ${kpi("📊","% vs Meta até "+dataRef,P(pVGa),"Comparação justa dia a dia",undefined,CR(pVGa))}
     </div>
     <div class="sl">Ranking por Canal</div>
     <div class="card"><div style="height:${Math.max(canaisVendas.length*52+40,280)}px"><canvas id="cRank"></canvas></div></div>
