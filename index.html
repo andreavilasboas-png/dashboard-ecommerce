@@ -10,8 +10,7 @@
 body{background:#0a0f1e;color:#f1f5f9;font-family:'Inter',-apple-system,sans-serif;padding:20px;min-height:100vh}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:#334155;border-radius:99px}
 .topo{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-.titulo{font-size:20px;font-weight:800;color:#fff}
-.sub{font-size:12px;color:#64748b;margin-top:3px}
+.titulo{font-size:20px;font-weight:800;color:#fff}.sub{font-size:12px;color:#64748b;margin-top:3px}
 .badge{border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700}
 .bg{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
 .bb{background:#6366f122;color:#a5b4fc;border:1px solid #6366f144}
@@ -22,7 +21,7 @@ body{background:#0a0f1e;color:#f1f5f9;font-family:'Inter',-apple-system,sans-ser
 .tab.on{background:#B91C1C;color:#fff}.tab.off{background:rgba(255,255,255,0.06);color:#94a3b8}
 .sl{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;margin-top:4px}
 .alerta{background:rgba(185,28,28,0.08);border:1px solid rgba(185,28,28,0.25);border-radius:14px;padding:16px 20px;margin-bottom:22px}
-.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:24px}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px}
 .kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 20px}
 .card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 20px;margin-bottom:20px}
@@ -40,7 +39,6 @@ table.t td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color
 </head>
 <body>
 
-<!-- SENHA -->
 <div id="login" style="display:flex;align-items:center;justify-content:center;min-height:100vh">
   <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:40px;width:100%;max-width:380px;text-align:center">
     <div style="font-size:40px;margin-bottom:16px">📊</div>
@@ -59,7 +57,7 @@ table.t td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color
   <div id="loading" class="loading">
     <div class="spin"></div>
     <div style="text-align:center">
-      <div style="font-size:15px;font-weight:600;color:#e2e8f0">Carregando Dashboard E-commerce</div>
+      <div style="font-size:15px;font-weight:600;color:#e2e8f0">Carregando Dashboard</div>
       <div id="lmsg" class="pulse" style="font-size:12px;color:#475569;margin-top:6px">Conectando ao Google Sheets...</div>
     </div>
   </div>
@@ -70,54 +68,77 @@ table.t td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color
 const KEY="AIzaSyAC0G7Bnnaev84dgzCx6n9GKoKAsFZrFmM";
 const SID="1J7jSMjAbD8RtKbKRzWOaEuy3K-sThifDDS_y7sMLUzw";
 
-// ── ÍNDICES EXATOS verificados via API ──────────────────────────────────────
-// Canal Faturamento — linha de dado (ex: 01/06/2026)
+// ══ ÍNDICES VERIFICADOS NO EXCEL (col 0 = A) ══════════════════════════════
+// FATURAMENTO — linha de cabeçalho=598, dados a partir de 599
 const F={
-  DATA:1, DIA:2, PCT_DIAR:3,
-  CMV_CD:4, CMV_LOJAS:5, CMV_GERAL:6, MARGEM:7,
-  META_GERAL:8,    // R$ 282.089,55
-  REAL_ACUM:10,    // R$ 181.238,13  ← índice 10 (não 9!)
-  PCT_ACUM:11,     // 3,59%
-  DIF_PCT:12,      // -35,75%
-  VENDA_ACUM:15,   // R$ 181.238,13 (venda acumulada)
-  TICKET:18,       // R$ 319,25
-  META_CD:19,      // R$ 140.616,00
-  REAL_CD:21,      // R$ 10.201,81
-  PCT_CD:22,       // 0,40%
-  META_OUT:27,     // R$ 71.591,12
-  REAL_OUT:29,     // R$ 23.352,13
-  PCT_OUT:30,      // 1,82%
-  META_LOJAS:35,   // R$ 69.882,43
-  REAL_LOJAS:37,   // R$ 147.684,19
-  PCT_LOJAS:38,    // 6,48%
-  META_1P:56,      // R$ 210.498,43
-  REAL_1P:57,      // R$ 157.886,00
-  PCT_1P:58,       // 4,77%
+  DATA:1,       // B
+  DIA:2,        // C
+  CMV_CD:4,     // E
+  CMV_LOJAS:5,  // F
+  CMV_GERAL:6,  // G
+  MARGEM:7,     // H
+  META:8,       // I = Meta GERAL (ex: 282.089,55)
+  META_ACUM:9,  // J = Meta Acumulada
+  REAL:10,      // K = Realizado Acumulado (ex: 181.238,13 / 596.329,42)
+  PCT:11,       // L = % Realizado (ex: 0.0358 = 3,58%)
+  DIF:12,       // M = Diferença %
+  VENDA:15,     // P = Venda Acumulada
+  TICKET:18,    // S = Ticket Médio
+  META_CD:19,   // T = Meta CD
+  REAL_CD:21,   // V = Realizado CD
+  PCT_CD:22,    // W = % CD
+  META_OUT:27,  // AB = Meta OUT
+  REAL_OUT:29,  // AD = Realizado OUT
+  PCT_OUT:30,   // AE = % OUT
+  META_LOJAS:35,// AJ = Meta Lojas Omni
+  REAL_LOJAS:37,// AL = Realizado Lojas
+  PCT_LOJAS:38, // AM = % Lojas
+  META_1P:56,   // BE = Meta 1P Total
+  REAL_1P:58,   // BG = Realizado 1P
+  PCT_1P:59,    // BH = % 1P
+  // Pagamento (linha 602 = 04/06)
+  FESTCARD:64,  // BM
+  CARTAO:65,    // BN
+  PIX:66,       // BO
+  CREDSYSTEM:67,// BP
+  VALE:68,      // BQ
+  OUTROS:69,    // BR
 };
 
-// Canal Vendas — linha de dado (ex: 01/06/2026)
+// VENDAS — linha de cabeçalho=601, dados a partir de 602
 const V={
-  DATA:1, DIA:2, PCT_DIAR:3,
-  META_GERAL:4,    // R$ 282.089,55
-  REAL_ACUM:6,     // R$ 181.238,13
-  PCT_ACUM:7,      // 4,38%
-  DIF_PCT:8,       // -35,75%
-  VENDA_ACUM:11,   // R$ 181.238,13
-  META_LOJAS_G:16, // R$ 108.500,00
-  REAL_LOJAS_G:18, // R$ 120.520,16
-  PCT_LOJAS_G:19,  // 2,91%
-  META_LOJAS:26,   // R$ 92.108,73
-  REAL_LOJAS:29,   // R$ 45.832,05
-  PCT_LOJAS:30,    // 3,57%
-  META_OUT:50,     // R$ 71.591,12
-  REAL_OUT:54,     // R$ 23.352,13
-  PCT_OUT:55,      // 2,82%
-  META_APP:59,     // R$ 28.206,90
-  REAL_APP:60,     // R$ 16.930,18
+  DATA:1,         // B
+  DIA:2,          // C
+  META:4,         // E = Meta Geral Vendas (ex: 282.089,55)
+  REAL:6,         // G = Realizado (ex: 181.238,13)
+  PCT:7,          // H = % Realizado
+  DIF:8,          // I = Diferença %
+  VENDA:11,       // L = Venda Acumulada
+  META_LOJAS_G:16,// Q = Meta Lojas Geral
+  REAL_LOJAS_G:18,// S = Realizado Lojas Geral
+  PCT_LOJAS_G:19, // T = % Lojas Geral
+  META_LOJAS:26,  // AA = Meta Lojas (Omni)
+  REAL_LOJAS:29,  // AD = Realizado Lojas
+  PCT_LOJAS:30,   // AE = % Lojas
+  META_OUT:50,    // AY = Meta OUT Marketplace
+  REAL_OUT:54,    // BC = Realizado OUT
+  PCT_OUT:55,     // BD = % OUT
+  META_APP:59,    // BH = Meta App
+  REAL_APP:61,    // BJ = Realizado App
+  PCT_APP:62,     // BK = % App
+  META_SITE:66,   // BO = Meta Site Oscar
+  REAL_SITE:68,   // BQ = Realizado Site Oscar
+  PCT_SITE:69,    // BR = % Site Oscar
+  META_PAQ:73,    // BV = Meta Paquetá
+  REAL_PAQ:75,    // BX = Realizado Paquetá
+  PCT_PAQ:76,     // BY = % Paquetá
+  META_DIA:87,    // CJ = Meta Diadora
+  REAL_DIA:89,    // CL = Realizado Diadora
+  PCT_DIA:90,     // CM = % Diadora
 };
 
 const OK="#16a34a",WN="#d97706",ER="#dc2626",PR="#B91C1C";
-const CRS=["#6366f1","#f59e0b","#22d3ee","#10b981","#f43f5e","#a78bfa","#34d399","#fb923c"];
+const CRS=["#6366f1","#f59e0b","#22d3ee","#10b981","#f43f5e","#a78bfa"];
 let CH={};
 
 const R=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
@@ -125,20 +146,31 @@ const P=v=>`${Number(v||0).toFixed(1)}%`;
 const CR=p=>p>=100?OK:p>=70?WN:ER;
 
 function $B(v){
-  if(!v||v==="#REF!"||v==="#N/A"||v==="#DIV/0!")return 0;
+  if(v==null||v===""||String(v).includes("REF")||String(v).includes("N/A"))return 0;
+  if(typeof v==="number")return v;
   return parseFloat(String(v).replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0;
 }
 function $P(v){
-  if(!v||v==="#REF!"||v==="#N/A")return 0;
+  if(v==null||v===""||String(v).includes("REF"))return 0;
+  if(typeof v==="number") return Math.abs(v)<=1?v*100:v;
   let n=parseFloat(String(v).replace(/[%\s]/g,"").replace(",","."))||0;
-  return(n>0&&n<=1)?n*100:n;
+  return Math.abs(n)<=1?n*100:n;
 }
 function isJun(v){
   if(!v)return false;
-  const s=String(v).trim();
-  if(s.match(/^\d{2}\/\d{2}\/\d{4}$/))return s.slice(3,5)==="06"&&s.slice(6)==="2026";
-  if(s.match(/^\d{2}\/\d{2}\/\d{2}$/))return s.slice(3,5)==="06"&&s.slice(6)==="26";
-  return false;
+  const s=String(v);
+  return s.includes("2026-06")||s.includes("01/06/2026")||s.includes("01/06/26")||
+    (s.match(/^\d{2}\/\d{2}\/\d{4}$/)&&s.slice(3,5)==="06"&&s.slice(6)==="2026");
+}
+function isDate(v){
+  if(!v)return false;
+  const s=String(v);
+  return s.match(/\d{4}-\d{2}-\d{2}/)||s.match(/\d{2}\/\d{2}\/\d{4}/);
+}
+function fmtDate(v){
+  const s=String(v);
+  if(s.match(/\d{4}-\d{2}-\d{2}/)) return s.slice(8,10)+"/"+s.slice(5,7);
+  return s.slice(0,5);
 }
 
 async function fetchAba(aba,range){
@@ -147,7 +179,6 @@ async function fetchAba(aba,range){
   if(!r.ok)throw new Error(`Erro "${aba}": HTTP ${r.status}`);
   return(await r.json()).values||[];
 }
-
 function msg(m){const e=document.getElementById("lmsg");if(e)e.textContent=m;}
 
 async function load(){
@@ -155,105 +186,129 @@ async function load(){
   document.getElementById("main").style.display="none";
   Object.values(CH).forEach(c=>c&&c.destroy&&c.destroy());CH={};
   try{
-    msg("Buscando Canal Faturamento (linhas 596-628)...");
-    const rawF=await fetchAba("Diarização Canal Faturamento","A596:BJ628");
-    msg("Buscando Canal Vendas (linhas 599-631)...");
-    const rawV=await fetchAba("Diarização Canal Vendas","A599:BJ631");
-    msg("Processando dados...");
+    msg("Buscando Canal Faturamento...");
+    // Busca linha de totais (598) + dados junho (599-628)
+    const rawF=await fetchAba("Diarização Canal Faturamento","A598:BR628");
+    msg("Buscando Canal Vendas...");
+    const rawV=await fetchAba("Diarização Canal Vendas","A601:CY631");
+    msg("Processando...");
 
-    // Faturamento: pula 3 linhas de cabeçalho (596,597,598), dados a partir da 599
-    const rowsF=rawF.slice(3).filter(r=>isJun(r[F.DATA]));
-    // Vendas: pula 3 linhas de cabeçalho (599,600,601), dados a partir da 602
-    const rowsV=rawV.slice(3).filter(r=>isJun(r[V.DATA]));
+    // Faturamento: linha 0=totais junho, linhas 1+ = dados diários
+    const totF=rawF[0]||[];
+    const diasF=rawF.slice(1).filter(r=>r[F.DATA]&&isDate(r[F.DATA]));
+
+    // Vendas: linha 0=totais junho, linhas 1+ = dados diários
+    const totV=rawV[0]||[];
+    const diasV=rawV.slice(1).filter(r=>r[V.DATA]&&isDate(r[V.DATA]));
 
     // Última linha com realizado > 0
-    const comRF=rowsF.filter(r=>$B(r[F.REAL_ACUM])>0);
-    const ult=comRF[comRF.length-1]||rowsF[0]||[];
-    const comRV=rowsV.filter(r=>$B(r[V.REAL_ACUM])>0);
-    const ultV=comRV[comRV.length-1]||rowsV[0]||[];
+    const comRF=diasF.filter(r=>$B(r[F.REAL])>0);
+    const ult=comRF[comRF.length-1]||diasF[0]||[];
 
-    // ── KPIs Faturamento ──
-    const metaG=$B(ult[F.META_GERAL]);
-    const realG=$B(ult[F.REAL_ACUM]);
-    const pctG=$P(ult[F.PCT_ACUM])||(metaG>0?(realG/metaG)*100:0);
-    const cmvG=$P(ult[F.CMV_GERAL]);
-    const cmvCD=$P(ult[F.CMV_CD]);
-    const cmvL=$P(ult[F.CMV_LOJAS]);
-    const margem=$P(ult[F.MARGEM]);
-    const ticket=$B(ult[F.TICKET]);
-    const vendaA=$B(ult[F.VENDA_ACUM]);
-    const dataRef=ult[F.DATA]||"";
+    // ── KPIs Faturamento (da linha de totais = linha 598) ──
+    const metaG=$B(totF[F.META]);           // R$ 5.055.368,33
+    const realG=$B(totF[F.REAL]);           // R$ 596.329,42
+    const pctG=$P(totF[F.PCT]);             // 11,80%
+    const cmvG=$P(totF[F.CMV_GERAL]);       // 42,43%
+    const cmvCD=$P(totF[F.CMV_CD]);         // 42,54%
+    const cmvL=$P(totF[F.CMV_LOJAS]);       // 42,40%
+    const margem=$P(totF[F.MARGEM]);        // 100% → usamos 100-cmv
+    const metaCD=$B(totF[F.META_CD]);       // 2.520.000
+    const realCD=$B(totF[F.REAL_CD]);       // 44.269,35
+    const pctCD=$P(totF[F.PCT_CD]);
+    const metaOUT=$B(totF[F.META_OUT]);     // 1.282.995
+    const realOUT=$B(totF[F.REAL_OUT]);     // 80.293,45
+    const pctOUT=$P(totF[F.PCT_OUT]);
+    const metaLojas=$B(totF[F.META_LOJAS]); // 1.252.373
+    const realLojas=$B(totF[F.REAL_LOJAS]); // 471.766,62
+    const pctLojas=$P(totF[F.PCT_LOJAS]);
+    const meta1P=$B(totF[F.META_1P]);       // 3.772.373
+    const real1P=$B(totF[F.REAL_1P]);       // 516.035,97
+    const pct1P=$P(totF[F.PCT_1P]);
+    const falta=metaG-realG;
 
-    // ── Canais Faturamento ──
-    const metaCD=$B(ult[F.META_CD]);
-    const realCD=$B(ult[F.REAL_CD]);
-    const pctCD=$P(ult[F.PCT_CD])||(metaCD>0?(realCD/metaCD)*100:0);
-    const metaOUT=$B(ult[F.META_OUT]);
-    const realOUT=$B(ult[F.REAL_OUT]);
-    const pctOUT=$P(ult[F.PCT_OUT])||(metaOUT>0?(realOUT/metaOUT)*100:0);
-    const metaLojas=$B(ult[F.META_LOJAS]);
-    const realLojas=$B(ult[F.REAL_LOJAS]);
-    const pctLojas=$P(ult[F.PCT_LOJAS])||(metaLojas>0?(realLojas/metaLojas)*100:0);
-    const meta1P=$B(ult[F.META_1P]);
-    const real1P=$B(ult[F.REAL_1P]);
-    const pct1P=$P(ult[F.PCT_1P])||(meta1P>0?(real1P/meta1P)*100:0);
+    // Pagamento (da última linha com dados reais = 04/06)
+    const pgRow=comRF[comRF.length-1]||[];
+    const PAG=[
+      {name:"Cartão Crédito",pct:Math.round($P(pgRow[F.CARTAO])*10)/10||37.09,cor:CRS[0]},
+      {name:"FestCard",      pct:Math.round($P(pgRow[F.FESTCARD])*10)/10||26.06,cor:CRS[1]},
+      {name:"Pix",           pct:Math.round($P(pgRow[F.PIX])*10)/10||22.28,cor:CRS[2]},
+      {name:"Credsystem",    pct:Math.round($P(pgRow[F.CREDSYSTEM])*10)/10||5.01,cor:CRS[3]},
+      {name:"Vale",          pct:Math.round($P(pgRow[F.VALE])*10)/10||3.11,cor:CRS[4]},
+      {name:"Outros",        pct:Math.round($P(pgRow[F.OUTROS])*10)/10||6.45,cor:CRS[5]},
+    ];
 
-    // ── Canal Vendas ──
-    const metaVG=$B(ultV[V.META_GERAL]);
-    const realVG=$B(ultV[V.REAL_ACUM]);
-    const pctVG=$P(ultV[V.PCT_ACUM])||(metaVG>0?(realVG/metaVG)*100:0);
-    const metaLojasG=$B(ultV[V.META_LOJAS_G]);
-    const realLojasG=$B(ultV[V.REAL_LOJAS_G]);
-    const pctLojasG=$P(ultV[V.PCT_LOJAS_G])||(metaLojasG>0?(realLojasG/metaLojasG)*100:0);
-    const metaLojasD=$B(ultV[V.META_LOJAS]);
-    const realLojasD=$B(ultV[V.REAL_LOJAS]);
-    const pctLojasD=$P(ultV[V.PCT_LOJAS])||(metaLojasD>0?(realLojasD/metaLojasD)*100:0);
-    const metaOUTV=$B(ultV[V.META_OUT]);
-    const realOUTV=$B(ultV[V.REAL_OUT]);
-    const pctOUTV=$P(ultV[V.PCT_OUT])||(metaOUTV>0?(realOUTV/metaOUTV)*100:0);
-    const metaApp=$B(ultV[V.META_APP]);
-    const realApp=$B(ultV[V.REAL_APP]);
-    const pctApp=metaApp>0?(realApp/metaApp)*100:0;
+    // ── KPIs Vendas (da linha de totais = linha 601) ──
+    const metaVG=$B(totV[V.META]);
+    const realVG=$B(totV[V.REAL]);
+    const pctVG=$P(totV[V.PCT]);
+    const metaLG=$B(totV[V.META_LOJAS_G]);
+    const realLG=$B(totV[V.REAL_LOJAS_G]);
+    const pctLG=$P(totV[V.PCT_LOJAS_G]);
+    const metaLO=$B(totV[V.META_LOJAS]);
+    const realLO=$B(totV[V.REAL_LOJAS]);
+    const pctLO=$P(totV[V.PCT_LOJAS]);
+    const metaOV=$B(totV[V.META_OUT]);
+    const realOV=$B(totV[V.REAL_OUT]);
+    const pctOV=$P(totV[V.PCT_OUT]);
+    const metaAP=$B(totV[V.META_APP]);
+    const realAP=$B(totV[V.REAL_APP]);
+    const pctAP=$P(totV[V.PCT_APP]);
+    const metaST=$B(totV[V.META_SITE]);
+    const realST=$B(totV[V.REAL_SITE]);
+    const pctST=$P(totV[V.PCT_SITE]);
+    const metaPQ=$B(totV[V.META_PAQ]);
+    const realPQ=$B(totV[V.REAL_PAQ]);
+    const pctPQ=$P(totV[V.PCT_PAQ]);
+    const metaDI=$B(totV[V.META_DIA]);
+    const realDI=$B(totV[V.REAL_DIA]);
+    const pctDI=$P(totV[V.PCT_DIA]);
 
     const canaisVendas=[
-      {canal:"Lojas Oscar Geral",meta:metaLojasG,real:realLojasG,pct:pctLojasG},
-      {canal:"Lojas (Omni/Hubs)", meta:metaLojasD,real:realLojasD,pct:pctLojasD},
-      {canal:"OUT Marketplace",   meta:metaOUTV,  real:realOUTV,  pct:pctOUTV},
-      {canal:"App Oscar",         meta:metaApp,   real:realApp,   pct:pctApp},
+      {canal:"Lojas Oscar Geral",meta:metaLG, real:realLG, pct:pctLG||(metaLG>0?(realLG/metaLG)*100:0)},
+      {canal:"Lojas Omni/Hubs",  meta:metaLO, real:realLO, pct:pctLO||(metaLO>0?(realLO/metaLO)*100:0)},
+      {canal:"OUT Marketplace",  meta:metaOV, real:realOV, pct:pctOV||(metaOV>0?(realOV/metaOV)*100:0)},
+      {canal:"App Oscar",        meta:metaAP, real:realAP, pct:pctAP||(metaAP>0?(realAP/metaAP)*100:0)},
+      {canal:"Site Oscar",       meta:metaST, real:realST, pct:pctST||(metaST>0?(realST/metaST)*100:0)},
+      {canal:"Paquetá Calç.",    meta:metaPQ, real:realPQ, pct:pctPQ||(metaPQ>0?(realPQ/metaPQ)*100:0)},
+      {canal:"Diadora",          meta:metaDI, real:realDI, pct:pctDI||(metaDI>0?(realDI/metaDI)*100:0)},
     ].map(c=>({...c,gap:c.real-c.meta})).filter(c=>c.meta>0||c.real>0);
 
     const canaisFat=[
-      {canal:"CD",          meta:metaCD,   real:realCD,   pct:pctCD},
-      {canal:"OUT Marketp.",meta:metaOUT,  real:realOUT,  pct:pctOUT},
-      {canal:"Lojas Omni",  meta:metaLojas,real:realLojas,pct:pctLojas},
-      {canal:"1P Total",    meta:meta1P,   real:real1P,   pct:pct1P},
+      {canal:"CD",         meta:metaCD,   real:realCD,   pct:pctCD||(metaCD>0?(realCD/metaCD)*100:0)},
+      {canal:"OUT Marketp",meta:metaOUT,  real:realOUT,  pct:pctOUT||(metaOUT>0?(realOUT/metaOUT)*100:0)},
+      {canal:"Lojas Omni", meta:metaLojas,real:realLojas,pct:pctLojas||(metaLojas>0?(realLojas/metaLojas)*100:0)},
+      {canal:"1P Total",   meta:meta1P,   real:real1P,   pct:pct1P||(meta1P>0?(real1P/meta1P)*100:0)},
     ].map(c=>({...c,gap:c.real-c.meta})).filter(c=>c.meta>0||c.real>0);
 
     // Evolução diária
-    const evolF=rowsF.map(r=>({
-      data:String(r[F.DATA]).slice(0,5),
-      meta:$B(r[F.META_GERAL]),
-      real:$B(r[F.REAL_ACUM]),
-      pct:$P(r[F.PCT_ACUM]),
+    const evolF=diasF.map(r=>({
+      data:fmtDate(r[F.DATA]),
+      meta:$B(r[F.META]),
+      real:$B(r[F.REAL]),
+      pct:$P(r[F.PCT]),
       cmv:$P(r[F.CMV_GERAL]),
-      dif:$P(r[F.DIF_PCT]),
     })).filter(e=>e.meta>0);
 
-    const evolV=rowsV.map(r=>({
-      data:String(r[V.DATA]).slice(0,5),
-      meta:$B(r[V.META_GERAL]),
-      real:$B(r[V.REAL_ACUM]),
-      pct:$P(r[V.PCT_ACUM]),
+    const evolV=diasV.map(r=>({
+      data:fmtDate(r[V.DATA]),
+      meta:$B(r[V.META]),
+      real:$B(r[V.REAL]),
+      pct:$P(r[V.PCT]),
     })).filter(e=>e.meta>0);
 
-    render({dataRef,metaG,realG,pctG,cmvG,cmvCD,cmvL,margem,ticket,vendaA,
-            metaVG,realVG,pctVG,canaisFat,canaisVendas,evolF,evolV});
+    const dataRef=fmtDate(comRF[comRF.length-1]?.[F.DATA]||diasF[0]?.[F.DATA]||"");
+
+    render({dataRef,metaG,realG,pctG,falta,cmvG,cmvCD,cmvL,
+            metaCD,realCD,pctCD,metaOUT,realOUT,pctOUT,
+            metaLojas,realLojas,pctLojas,meta1P,real1P,pct1P,
+            metaVG,realVG,pctVG,canaisFat,canaisVendas,evolF,evolV,PAG});
   }catch(e){
     document.getElementById("loading").style.display="none";
     document.getElementById("main").style.display="block";
     document.getElementById("main").innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;padding:20px;text-align:center">
       <div style="font-size:40px">⚠️</div>
-      <div style="color:#f87171;font-size:15px;font-weight:700">Erro ao carregar dados</div>
+      <div style="color:#f87171;font-size:15px;font-weight:700">Erro ao carregar</div>
       <div style="color:#94a3b8;font-size:13px;max-width:460px;line-height:1.6">${e.message}</div>
       <button class="btn" onclick="load()">↻ Tentar novamente</button></div>`;
   }
@@ -266,7 +321,7 @@ function kpi(ic,lb,vl,sb,pt,cr){
     <div style="font-size:22px;font-weight:800;color:${c};line-height:1.1">${vl}</div>
     ${sb?`<div style="font-size:12px;color:#64748b;margin-top:4px">${sb}</div>`:""}
     ${pt!==undefined?`<div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px"><span>Atingimento</span><span style="color:${CR(pt)};font-weight:700">${P(pt)}</span></div>
-    <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-top:3px"><div style="width:${Math.min(pt,100)}%;height:6px;border-radius:99px;background:${CR(pt)}"></div></div>`:""}
+    <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-top:3px"><div style="width:${Math.min(Math.abs(pt),100)}%;height:6px;border-radius:99px;background:${CR(pt)}"></div></div>`:""}
   </div>`;
 }
 
@@ -282,35 +337,25 @@ function cCard(c){
       <div><div style="font-size:10px;color:#64748b">REALIZADO</div><div style="font-size:12px;font-weight:600;color:#e2e8f0">${R(c.real)}</div></div>
       <div><div style="font-size:10px;color:#64748b">GAP</div><div style="font-size:12px;font-weight:600;color:${c.gap>=0?OK:ER}">${c.gap>=0?"+":""}${R(c.gap)}</div></div>
     </div>
-    <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px"><div style="width:${Math.min(c.pct,100)}%;height:5px;border-radius:99px;background:${cor}"></div></div>
+    <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px"><div style="width:${Math.min(Math.abs(c.pct),100)}%;height:5px;border-radius:99px;background:${cor}"></div></div>
   </div>`;
 }
 
 function render(d){
   const hoje=new Date().toLocaleDateString("pt-BR");
-  const{dataRef,metaG,realG,pctG,cmvG,cmvCD,cmvL,margem,ticket,vendaA,
-        metaVG,realVG,pctVG,canaisFat,canaisVendas,evolF,evolV}=d;
-  const falta=metaG-realG;
+  const{dataRef,metaG,realG,pctG,falta,cmvG,cmvCD,cmvL,
+        metaVG,realVG,pctVG,canaisFat,canaisVendas,evolF,evolV,PAG}=d;
 
-  const todosCanais=[...canaisFat,...canaisVendas];
-  const crit=todosCanais.filter(c=>c.pct<50&&c.meta>0);
-  const atenc=todosCanais.filter(c=>c.pct>=50&&c.pct<80&&c.meta>0);
-  const dest=todosCanais.filter(c=>c.pct>=100&&c.meta>0);
-
-  const PAGT=[
-    {name:"Cartão Crédito",pct:37.09,cor:CRS[0]},
-    {name:"FestCard",      pct:26.06,cor:CRS[1]},
-    {name:"Pix",           pct:22.28,cor:CRS[2]},
-    {name:"Credsystem",    pct:5.01, cor:CRS[3]},
-    {name:"Vale",          pct:3.11, cor:CRS[4]},
-    {name:"Outros",        pct:6.45, cor:CRS[5]},
-  ];
+  const todosC=[...canaisFat,...canaisVendas];
+  const crit=todosC.filter(c=>c.pct<50&&c.meta>0);
+  const atenc=todosC.filter(c=>c.pct>=50&&c.pct<80&&c.meta>0);
+  const dest=todosC.filter(c=>c.pct>=100&&c.meta>0);
 
   document.getElementById("main").innerHTML=`
   <div class="topo">
     <div>
       <div class="titulo">📊 Dashboard E-commerce · Grupo Oscar</div>
-      <div class="sub">Ref. ${dataRef} · Junho/2026 · Atualizado ${hoje}</div>
+      <div class="sub">Acumulado até ${dataRef} · Junho/2026 · ${hoje}</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <span class="badge bg">✓ Google Sheets Live</span>
@@ -328,43 +373,45 @@ function render(d){
   </div>
 
   <div class="alerta">
-    <div style="font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:10px">🔔 Inteligência do Dia · ${dataRef}</div>
+    <div style="font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:10px">🔔 Inteligência do Dia · Acumulado até ${dataRef}</div>
     <div style="display:flex;flex-wrap:wrap;gap:20px">
       ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)} · gap ${R(c.gap)}</div>`).join("")}</div>`:""}
       ${atenc.length?`<div><div style="color:#fbbf24;font-weight:700;font-size:11px;margin-bottom:4px">⚠️ ATENÇÃO — 50% a 80%</div>${atenc.map(c=>`<div style="color:#fde68a;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)}</div>`).join("")}</div>`:""}
       ${dest.length?`<div><div style="color:#4ade80;font-weight:700;font-size:11px;margin-bottom:4px">✅ ACIMA DA META</div>${dest.map(c=>`<div style="color:#86efac;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)}</div>`).join("")}</div>`:""}
+      ${!crit.length&&!atenc.length&&!dest.length?`<div style="color:#94a3b8;font-size:12px">Dados de todos os canais carregados.</div>`:""}
     </div>
   </div>
 
   <!-- FATURAMENTO -->
   <div class="sec on" id="s-fat">
-    <div class="sl">Faturamento Acumulado · até ${dataRef}</div>
+    <div class="sl">GMV Faturamento · Acumulado Junho 2026</div>
     <div class="g3">
       ${kpi("🎯","GMV Realizado",R(realG),`Meta: ${R(metaG)}`,pctG)}
-      ${kpi("⚡","Falta para Meta",R(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante p/ 100%",undefined,falta<=0?OK:ER)}
+      ${kpi("⚡","Falta p/ Meta",R(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante p/ 100%",undefined,falta<=0?OK:ER)}
       ${kpi("📊","% Atingimento",P(pctG),`Gap: ${P(pctG-100)}`,undefined,CR(pctG))}
-      ${ticket>0?kpi("🎫","Ticket Médio",R(ticket),"Valor médio do pedido",undefined,"#f59e0b"):""}
-      ${vendaA>0?kpi("📦","Venda Acumulada",R(vendaA),"Tendência regressão",undefined,"#a5b4fc"):""}
+      ${kpi("📦","GMV CD",R(d.realCD),`Meta: ${R(d.metaCD)}`,d.pctCD)}
+      ${kpi("🏬","GMV Lojas",R(d.realLojas),`Meta: ${R(d.metaLojas)}`,d.pctLojas)}
+      ${kpi("🛒","1P Total",R(d.real1P),`Meta: ${R(d.meta1P)}`,d.pct1P)}
     </div>
     <div class="sl">Evolução Diária · Meta vs Realizado</div>
     <div class="card"><div style="height:240px"><canvas id="cEvF"></canvas></div></div>
     <div class="sl">% Atingimento por Dia</div>
     <div class="card"><div style="height:200px"><canvas id="cPctF"></canvas></div></div>
-    <div class="sl">Canais · Faturamento Acumulado</div>
+    <div class="sl">Canais · Breakdown Faturamento</div>
     <div class="g2">${canaisFat.map(cCard).join("")}</div>
   </div>
 
   <!-- CANAL VENDAS -->
   <div class="sec" id="s-vend">
-    <div class="sl">Canal Vendas · Acumulado até ${dataRef}</div>
+    <div class="sl">Canal Vendas · Acumulado Junho 2026</div>
     <div class="g3">
       ${kpi("🛒","GMV Vendas",R(realVG),`Meta: ${R(metaVG)}`,pctVG)}
-      ${kpi("⚡","Falta (Vendas)",R(Math.abs(metaVG-realVG)),metaVG<=realVG?"🟢 Meta batida!":"Restante p/ 100%",undefined,metaVG<=realVG?OK:ER)}
+      ${kpi("⚡","Falta p/ Meta",R(Math.abs(metaVG-realVG)),metaVG<=realVG?"🟢 Meta batida!":"Restante",undefined,metaVG<=realVG?OK:ER)}
       ${kpi("📊","% Atingimento",P(pctVG),`Gap: ${P(pctVG-100)}`,undefined,CR(pctVG))}
     </div>
-    <div class="sl">Ranking por Canal · Vendas</div>
-    <div class="card"><div style="height:${Math.max(canaisVendas.length*52+40,200)}px"><canvas id="cRank"></canvas></div></div>
-    <div class="sl">Performance Detalhada</div>
+    <div class="sl">Ranking por Canal</div>
+    <div class="card"><div style="height:${Math.max(canaisVendas.length*52+40,250)}px"><canvas id="cRank"></canvas></div></div>
+    <div class="sl">Performance Detalhada por Canal</div>
     <div class="g2">${canaisVendas.map(cCard).join("")}</div>
     <div class="sl">Evolução Diária · Canal Vendas</div>
     <div class="card"><div style="height:220px"><canvas id="cEvV"></canvas></div></div>
@@ -372,23 +419,23 @@ function render(d){
 
   <!-- MARGEM -->
   <div class="sec" id="s-marg">
-    <div class="sl">CMV · Margem Bruta · Ref. ${dataRef}</div>
+    <div class="sl">CMV · Margem Bruta · Acumulado até ${dataRef}</div>
     <div class="g3">
-      ${[{l:"Geral",cmv:cmvG||42.43,mb:margem||57.57},{l:"CD",cmv:cmvCD||42.54,mb:100-(cmvCD||42.54)},{l:"Lojas",cmv:cmvL||42.40,mb:100-(cmvL||42.40)}].map(m=>`
+      ${[{l:"Geral",cmv:cmvG||42.43},{l:"CD",cmv:cmvCD||42.54},{l:"Lojas",cmv:cmvL||42.40}].map(m=>`
       <div class="kpi">
         <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:12px">${m.l}</div>
         <div style="display:flex;gap:16px;margin-bottom:12px">
           <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${ER}">${P(m.cmv)}</div></div>
-          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${OK}">${P(m.mb)}</div></div>
+          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${OK}">${P(100-m.cmv)}</div></div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:8px;overflow:hidden">
-          <div style="width:${m.mb}%;height:100%;background:${OK};border-radius:99px"></div>
+          <div style="width:${100-m.cmv}%;height:100%;background:${OK};border-radius:99px"></div>
         </div>
       </div>`).join("")}
     </div>
-    <div class="sl">CMV vs Margem Bruta por Canal</div>
+    <div class="sl">CMV vs Margem Bruta</div>
     <div class="card"><div style="height:220px"><canvas id="cMarg"></canvas></div></div>
-    <div class="sl">Evolução do CMV Diário</div>
+    <div class="sl">Evolução CMV Diário</div>
     <div class="card"><div style="height:200px"><canvas id="cCMV"></canvas></div></div>
   </div>
 
@@ -398,7 +445,7 @@ function render(d){
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
       <div class="card" style="margin-bottom:0"><div style="height:280px"><canvas id="cPag"></canvas></div></div>
       <div>
-        ${PAGT.map(p=>`<div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border-radius:10px;padding:12px 16px;margin-bottom:10px">
+        ${PAG.map(p=>`<div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border-radius:10px;padding:12px 16px;margin-bottom:10px">
           <div style="width:12px;height:12px;border-radius:50%;background:${p.cor};flex-shrink:0"></div>
           <div style="flex:1;font-size:13px;color:#e2e8f0">${p.name}</div>
           <div style="font-size:16px;font-weight:700;color:${p.cor}">${p.pct}%</div>
@@ -407,7 +454,7 @@ function render(d){
           </div>
         </div>`).join("")}
         <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:#a5b4fc;line-height:1.6">
-          💡 <strong>Cartão + FestCard</strong> = <strong>63,15%</strong><br>Pix em 3º com <strong>22,28%</strong>
+          💡 <strong>Cartão + FestCard</strong> = <strong>${(PAG[0].pct+PAG[1].pct).toFixed(1)}%</strong><br>Pix em 3º com <strong>${PAG[2].pct}%</strong>
         </div>
       </div>
     </div>
@@ -418,15 +465,14 @@ function render(d){
     <div class="sl">Diarização Canal Faturamento · ${evolF.length} dias de junho</div>
     <div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
       <table class="t">
-        <thead><tr><th>Data</th><th>Dia</th><th>Meta Diária</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP R$</th><th>CMV</th></tr></thead>
-        <tbody>${evolF.map((e,i)=>{const g=e.real-e.meta;return`<tr style="background:${i%2===0?"transparent":"rgba(255,255,255,0.015)"}">
+        <thead><tr><th>Data</th><th>Meta Diária</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP R$</th><th>CMV</th></tr></thead>
+        <tbody>${evolF.map((e,i)=>{const g=e.real-e.meta;return`<tr style="background:${i%2?"rgba(255,255,255,0.015)":"transparent"}">
           <td style="font-weight:600;color:#e2e8f0">${e.data}</td>
-          <td style="color:#64748b">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][new Date("2026-06-"+e.data.slice(0,2)).getDay()]||""}</td>
           <td>${R(e.meta)}</td>
           <td style="font-weight:600">${R(e.real)}</td>
           <td style="color:${CR(e.pct)};font-weight:700">${P(e.pct)}</td>
-          <td style="color:${g>=0?OK:ER};font-weight:600">${g>=0?"+":""}${R(g)}</td>
-          <td style="color:${e.cmv>0?"#94a3b8":"#475569"}">${e.cmv>0?P(e.cmv):"-"}</td>
+          <td style="color:${g>=0?OK:ER}">${g>=0?"+":""}${R(g)}</td>
+          <td style="color:#94a3b8">${e.cmv>0?P(e.cmv):"-"}</td>
         </tr>`;}).join("")}</tbody>
       </table>
     </div>
@@ -449,17 +495,16 @@ function render(d){
         {label:"Meta",data:evolF.map(e=>e.meta),backgroundColor:"#334155",borderRadius:3},
         {label:"Realizado",data:evolF.map(e=>e.real),backgroundColor:PR,borderRadius:3}
       ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
-    CH.pctF=new Chart(document.getElementById("cPctF"),{type:"line",
+    CH.pF=new Chart(document.getElementById("cPctF"),{type:"line",
       data:{labels:evolF.map(e=>e.data),datasets:[
         {label:"% Atingimento",data:evolF.map(e=>e.pct),borderColor:"#6366f1",backgroundColor:"rgba(99,102,241,0.1)",tension:.4,fill:true,pointRadius:3},
         {label:"Meta 100%",data:evolF.map(()=>100),borderColor:"#475569",borderDash:[5,5],pointRadius:0}
       ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
   }
-
   if(canaisVendas.length>0){
     const srt=[...canaisVendas].sort((a,b)=>b.pct-a.pct);
-    CH.rank=new Chart(document.getElementById("cRank"),{type:"bar",
-      data:{labels:srt.map(c=>c.canal),datasets:[{label:"% Atingido",data:srt.map(c=>+c.pct.toFixed(1)),backgroundColor:srt.map(c=>CR(c.pct)),borderRadius:4}]},
+    CH.rk=new Chart(document.getElementById("cRank"),{type:"bar",
+      data:{labels:srt.map(c=>c.canal),datasets:[{label:"% Atingido",data:srt.map(c=>+Math.abs(c.pct).toFixed(1)),backgroundColor:srt.map(c=>CR(c.pct)),borderRadius:4}]},
       options:{...BO,indexAxis:"y",scales:{x:{...BO.scales.x,ticks:{...BO.scales.x.ticks,callback:v=>`${v}%`}},y:{...BO.scales.y,ticks:{color:"#94a3b8",font:{size:11}}}}}});
   }
   if(evolV.length>0){
@@ -469,23 +514,20 @@ function render(d){
         {label:"Realizado",data:evolV.map(e=>e.real),backgroundColor:"#22d3ee",borderRadius:3}
       ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
   }
-
-  const mDs=[{l:"Geral",cmv:cmvG||42.43,mb:margem||57.57},{l:"CD",cmv:cmvCD||42.54,mb:100-(cmvCD||42.54)},{l:"Lojas",cmv:cmvL||42.40,mb:100-(cmvL||42.40)}];
-  CH.marg=new Chart(document.getElementById("cMarg"),{type:"bar",
-    data:{labels:mDs.map(m=>m.l),datasets:[
-      {label:"CMV",data:mDs.map(m=>m.cmv),backgroundColor:ER,borderRadius:4},
-      {label:"Margem Bruta",data:mDs.map(m=>m.mb),backgroundColor:OK,borderRadius:4}
+  const mD=[{l:"Geral",cmv:cmvG||42.43},{l:"CD",cmv:cmvCD||42.54},{l:"Lojas",cmv:cmvL||42.40}];
+  CH.mg=new Chart(document.getElementById("cMarg"),{type:"bar",
+    data:{labels:mD.map(m=>m.l),datasets:[
+      {label:"CMV",data:mD.map(m=>m.cmv),backgroundColor:ER,borderRadius:4},
+      {label:"Margem Bruta",data:mD.map(m=>+(100-m.cmv).toFixed(2)),backgroundColor:OK,borderRadius:4}
     ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,max:100,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
-
-  const cmvDia=evolF.filter(e=>e.cmv>0);
-  if(cmvDia.length>0){
-    CH.cmv=new Chart(document.getElementById("cCMV"),{type:"line",
-      data:{labels:cmvDia.map(e=>e.data),datasets:[{label:"CMV %",data:cmvDia.map(e=>e.cmv),borderColor:ER,backgroundColor:"rgba(220,38,38,0.1)",tension:.4,fill:true,pointRadius:3}]},
+  const cmvD=evolF.filter(e=>e.cmv>0);
+  if(cmvD.length>0){
+    CH.cv=new Chart(document.getElementById("cCMV"),{type:"line",
+      data:{labels:cmvD.map(e=>e.data),datasets:[{label:"CMV %",data:cmvD.map(e=>e.cmv),borderColor:ER,backgroundColor:"rgba(220,38,38,0.1)",tension:.4,fill:true,pointRadius:3}]},
       options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
   }
-
-  CH.pag=new Chart(document.getElementById("cPag"),{type:"doughnut",
-    data:{labels:PAGT.map(p=>p.name),datasets:[{data:PAGT.map(p=>p.pct),backgroundColor:PAGT.map(p=>p.cor),borderColor:"#0a0f1e",borderWidth:2}]},
+  CH.pg=new Chart(document.getElementById("cPag"),{type:"doughnut",
+    data:{labels:PAG.map(p=>p.name),datasets:[{data:PAG.map(p=>p.pct),backgroundColor:PAG.map(p=>p.cor),borderColor:"#0a0f1e",borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:"#94a3b8",font:{size:11},padding:12}},
       tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}});
 }
@@ -497,7 +539,6 @@ function showTab(t){
   });
   setTimeout(()=>Object.values(CH).forEach(c=>c&&c.resize&&c.resize()),50);
 }
-
 function auth(){
   if(document.getElementById("pwd").value==="oscar@ecom26"){
     document.getElementById("login").style.display="none";
