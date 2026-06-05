@@ -6,510 +6,475 @@
 <title>Dashboard E-commerce · Grupo Oscar</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0a0f1e; color: #f1f5f9; font-family: 'Inter', -apple-system, sans-serif; padding: 20px; min-height: 100vh; }
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
-.topo { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
-.titulo { font-size:20px; font-weight:800; color:#fff; }
-.sub { font-size:12px; color:#64748b; margin-top:3px; }
-.badges { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-.badge { border-radius:20px; padding:3px 12px; font-size:11px; font-weight:700; }
-.badge-green { background:#16a34a22; color:#4ade80; border:1px solid #16a34a44; }
-.badge-blue  { background:#6366f122; color:#a5b4fc; border:1px solid #6366f144; }
-.btn { background:#B91C1C; color:#fff; border:none; border-radius:8px; padding:9px 20px; cursor:pointer; font-size:13px; font-weight:700; }
-.btn:hover { opacity:.85; }
-.tab-row { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
-.tab { padding:7px 16px; border-radius:99px; font-size:12px; font-weight:600; cursor:pointer; border:none; }
-.tab.active   { background:#B91C1C; color:#fff; }
-.tab.inactive { background:rgba(255,255,255,0.06); color:#94a3b8; }
-.sec-label { font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; }
-.alerta { background:rgba(185,28,28,0.08); border:1px solid rgba(185,28,28,0.25); border-radius:14px; padding:16px 20px; margin-bottom:22px; }
-.alerta-titulo { font-size:13px; font-weight:700; color:#fca5a5; margin-bottom:10px; }
-.alerta-grid { display:flex; flex-wrap:wrap; gap:20px; }
-.grid-kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:24px; }
-.kpi { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; }
-.kpi-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
-.kpi-value { font-size:24px; font-weight:800; line-height:1.1; }
-.kpi-sub   { font-size:12px; color:#64748b; margin-top:4px; }
-.kpi-bar-bg { background:rgba(255,255,255,0.08); border-radius:99px; height:6px; margin-top:8px; }
-.kpi-bar    { height:6px; border-radius:99px; }
-.grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-bottom:24px; }
-.grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-bottom:24px; }
-.card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; padding:18px 20px; margin-bottom:24px; }
-.canal-card { border-radius:14px; padding:16px 18px; }
-.pag-item { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border-radius:10px; padding:12px 16px; margin-bottom:10px; }
-.pag-dot  { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.pag-bar-bg { width:80px; background:rgba(255,255,255,0.06); border-radius:99px; height:5px; }
-.pag-bar    { height:5px; border-radius:99px; }
-.insight-box { background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:10px; padding:12px 16px; font-size:12px; color:#a5b4fc; margin-top:10px; line-height:1.6; }
-.section { display:none; }
-.section.active { display:block; }
-.loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; gap:18px; }
-.spinner { width:48px; height:48px; border:3px solid rgba(185,28,28,0.2); border-top:3px solid #B91C1C; border-radius:50%; animation:spin .8s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
-.pulse { animation:pulse 1.5s ease infinite; }
-.rodape { margin-top:28px; text-align:center; font-size:11px; color:#334155; }
-table.dados { width:100%; border-collapse:collapse; font-size:12px; }
-table.dados th { background:rgba(99,102,241,0.12); color:#a5b4fc; padding:9px 12px; text-align:left; font-weight:600; border-bottom:1px solid rgba(255,255,255,0.06); white-space:nowrap; }
-table.dados td { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); color:#cbd5e1; }
-table.dados tr:hover td { background:rgba(255,255,255,0.03); }
-@media(max-width:600px){ body{padding:12px;} .titulo{font-size:16px;} .kpi-value{font-size:20px;} }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0f1e;color:#f1f5f9;font-family:'Inter',-apple-system,sans-serif;padding:20px;min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:99px}
+.topo{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.titulo{font-size:20px;font-weight:800;color:#fff}
+.sub{font-size:12px;color:#64748b;margin-top:3px}
+.badge{border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700}
+.badge-g{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
+.badge-b{background:#6366f122;color:#a5b4fc;border:1px solid #6366f144}
+.btn{background:#B91C1C;color:#fff;border:none;border-radius:8px;padding:9px 20px;cursor:pointer;font-size:13px;font-weight:700}
+.btn:hover{opacity:.85}
+.tab-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:none}
+.tab.on{background:#B91C1C;color:#fff}
+.tab.off{background:rgba(255,255,255,0.06);color:#94a3b8}
+.sl{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;margin-top:4px}
+.alerta{background:rgba(185,28,28,0.08);border:1px solid rgba(185,28,28,0.25);border-radius:14px;padding:16px 20px;margin-bottom:22px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 20px}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 20px;margin-bottom:20px}
+.sec{display:none}
+.sec.on{display:block}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px}
+.spin{width:48px;height:48px;border:3px solid rgba(185,28,28,0.2);border-top:3px solid #B91C1C;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse{animation:pulse 1.5s ease infinite}
+.rodape{margin-top:28px;text-align:center;font-size:11px;color:#334155}
+table.t{width:100%;border-collapse:collapse;font-size:12px}
+table.t th{background:rgba(99,102,241,0.12);color:#a5b4fc;padding:9px 12px;text-align:left;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);white-space:nowrap}
+table.t td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:#cbd5e1}
+@media(max-width:600px){body{padding:12px}.titulo{font-size:16px}}
 </style>
 </head>
 <body>
 
-<!-- TELA DE SENHA -->
-<div id="tela-senha" style="display:flex;align-items:center;justify-content:center;min-height:100vh">
+<!-- SENHA -->
+<div id="login" style="display:flex;align-items:center;justify-content:center;min-height:100vh">
   <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:40px;width:100%;max-width:380px;text-align:center">
     <div style="font-size:40px;margin-bottom:16px">📊</div>
     <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px">Dashboard E-commerce</div>
     <div style="font-size:13px;color:#64748b;margin-bottom:28px">Grupo Oscar · Acesso Restrito</div>
-    <input id="input-senha" type="password" placeholder="Digite a senha de acesso"
+    <input id="pwd" type="password" placeholder="Digite a senha"
       style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;color:#f1f5f9;font-size:14px;outline:none;margin-bottom:12px"
-      onkeydown="if(event.key==='Enter')verificarSenha()"/>
-    <div id="erro-senha" style="color:#f87171;font-size:12px;margin-bottom:12px;display:none">Senha incorreta. Tente novamente.</div>
-    <button onclick="verificarSenha()" style="width:100%;background:#B91C1C;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Entrar</button>
-    <div style="font-size:11px;color:#334155;margin-top:20px">Grupo Oscar · E-commerce · Jun/2026</div>
+      onkeydown="if(event.key==='Enter')auth()"/>
+    <div id="erropwd" style="color:#f87171;font-size:12px;margin-bottom:12px;display:none">Senha incorreta.</div>
+    <button onclick="auth()" style="width:100%;background:#B91C1C;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Entrar</button>
   </div>
 </div>
 
-<div id="dashboard-wrapper" style="display:none">
-<div id="loading" class="loading">
-  <div class="spinner"></div>
-  <div style="text-align:center">
-    <div style="font-size:15px;font-weight:600;color:#e2e8f0">Carregando Dashboard E-commerce</div>
-    <div id="loading-msg" class="pulse" style="font-size:12px;color:#475569;margin-top:6px">Conectando ao Google Sheets...</div>
+<div id="app" style="display:none">
+  <div id="loading" class="loading">
+    <div class="spin"></div>
+    <div style="text-align:center">
+      <div style="font-size:15px;font-weight:600;color:#e2e8f0">Carregando Dashboard E-commerce</div>
+      <div id="lmsg" class="pulse" style="font-size:12px;color:#475569;margin-top:6px">Conectando...</div>
+    </div>
   </div>
-</div>
-<div id="main" style="display:none"></div>
+  <div id="main" style="display:none"></div>
 </div>
 
 <script>
-const API_KEY  = "AIzaSyAC0G7Bnnaev84dgzCx6n9GKoKAsFZrFmM";
-const SHEET_ID = "1J7jSMjAbD8RtKbKRzWOaEuy3K-sThifDDS_y7sMLUzw";
+const KEY = "AIzaSyAC0G7Bnnaev84dgzCx6n9GKoKAsFZrFmM";
+const SID = "1J7jSMjAbD8RtKbKRzWOaEuy3K-sThifDDS_y7sMLUzw";
 
-// Índices das colunas (baseado no mapeamento real da planilha)
-const COL = {
-  DATA: 1,        // B - Data
-  DIA_SEM: 2,     // C - Dia da semana
-  CMV_CD: 4,      // E - CMV Meta CD
-  CMV_LOJAS: 5,   // F - CMV Meta Lojas
-  CMV_GERAL: 6,   // G - CMV Meta Geral
-  MARGEM: 7,      // H - Margem
-  META_GERAL: 11, // L - Meta Geral diarização
-  REAL_ACUM: 13,  // N - Faturamento Realizado Acumulado
-  PCT_ACUM: 14,   // O - % Realizado Acumulado
-  META_CD: 22,    // W - Meta CD
-  REAL_CD: 24,    // Y - Realizado CD
-  PCT_CD: 25,     // Z - % CD
-  META_LOJAS: 38, // AM - Meta Lojas Oscar Geral
-  REAL_LOJAS: 40, // AO - Realizado Lojas Oscar Geral
-  PCT_LOJAS: 42,  // AQ - % Lojas
-  REAL_1P: 58,    // BG - Realizado Total 1P
-  META_1P: 59,    // BH - Meta Total 1P
-  PCT_1P: 60,     // BI - % 1P
+// COLUNAS EXATAS baseadas nos PDFs exportados da planilha
+// Aba Diarização Canal Faturamento
+const FC = {
+  DATA:1, DIA:2, PCT_DIAR:3,
+  CMV_CD:4, CMV_LOJAS:5, CMV_GERAL:6, MARGEM:7,
+  META_GERAL:8,      // I - Meta GERAL
+  REAL_ACUM:9,       // J - Faturamento Realizado Acumulado  
+  PCT_ACUM:10,       // K - % Realizado Acumulado
+  DIF_PCT:11,        // L - Diferença %
+  TENDENCIA:12,      // M - Tendência
+  VENDA_ACUM:13,     // N - Venda acumulada
+  TX_CONV:14,        // O - TX conversão
+  FAROL:15,          // P - Farol
+  TICKET:16,         // Q - Ticket Médio
+  META_CD:17,        // R - Meta CD (índice 17 = coluna R... vamos buscar direto)
 };
 
-const C = { ok:"#16a34a", warn:"#d97706", alert:"#dc2626", primary:"#B91C1C" };
-const CORES = ["#6366f1","#f59e0b","#22d3ee","#10b981","#f43f5e","#a78bfa","#34d399","#fb923c"];
-let charts = {};
+// Aba Diarização Canal Vendas
+const VC = {
+  DATA:1, DIA:2, PCT_DIAR:3,
+  META_GERAL:4,      // E - Meta GERAL Vendas
+  REAL_ACUM:5,       // F - Realizado Acumulado
+  PCT_ACUM:6,        // G - % Realizado
+  DIF_PCT:7,         // H - Diferença %
+  TENDENCIA:8,       // I - Tendência
+  VENDA_ACUM:9,      // J - Venda acumulada
+  // Canais
+  META_30:11,   REAL_30:12,   PCT_30:13,    // 3.0 Vendas
+  META_OUT:16,  REAL_OUT:17,  PCT_OUT:18,   // OUT Marketplace
+  META_APP:21,  REAL_APP:22,  PCT_APP:23,   // App Oscar
+  META_SITE:26, REAL_SITE:27, PCT_SITE:28,  // Site Oscar (1p+3p)
+  META_PAQ:31,  REAL_PAQ:32,  PCT_PAQ:33,   // Paquetá Calçados
+  META_PES:36,  REAL_PES:37,  PCT_PES:38,   // Paquetá Esportes
+  META_DIA:41,  REAL_DIA:42,  PCT_DIA:43,   // Diadora OUT
+};
 
-const fmtBRL = v => new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
-const fmtPct = v => `${Number(v||0).toFixed(1)}%`;
-const corPct = p => p>=100?C.ok:p>=70?C.warn:C.alert;
+const OK="#16a34a",WARN="#d97706",ERR="#dc2626",PRI="#B91C1C";
+const CORES=["#6366f1","#f59e0b","#22d3ee","#10b981","#f43f5e","#a78bfa","#34d399","#fb923c"];
+let CH={};
 
-function parseBRL(v) {
-  if(!v) return 0;
-  return parseFloat(String(v).replace(/[R$\s%]/g,"").replace(/\./g,"").replace(",","."))||0;
+const R=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
+const P=v=>`${Number(v||0).toFixed(1)}%`;
+const COR=p=>p>=100?OK:p>=70?WARN:ERR;
+
+function $BRL(v){
+  if(!v)return 0;
+  return parseFloat(String(v).replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0;
+}
+function $PCT(v){
+  if(!v)return 0;
+  let n=parseFloat(String(v).replace(/[%\s]/g,"").replace(",","."))||0;
+  return(n>0&&n<=1)?n*100:n;
+}
+function isJun(v){
+  if(!v)return false;
+  const s=String(v).trim();
+  if(s.match(/^\d{2}\/\d{2}\/\d{4}$/))return s.slice(3,5)==="06"&&s.slice(6)==="2026";
+  if(s.match(/^\d{2}\/\d{2}\/\d{2}$/))return s.slice(3,5)==="06"&&s.slice(6)==="26";
+  return/jun/i.test(s)||s.includes("06/2026");
 }
 
-function parsePct(v) {
-  if(!v) return 0;
-  const n = parseFloat(String(v).replace(/[%\s]/g,"").replace(",","."))||0;
-  // Se veio como decimal (0.7372) converte para percentual
-  return n > 0 && n <= 1 ? n * 100 : n;
-}
-
-function isJun26(v) {
-  if(!v) return false;
-  const s = String(v).trim();
-  if(s.match(/^\d{2}\/\d{2}\/\d{4}$/)) return s.slice(3,5)==="06" && s.slice(6)==="2026";
-  if(s.match(/^\d{2}\/\d{2}\/\d{2}$/)) return s.slice(3,5)==="06" && s.slice(6)==="26";
-  return /jun/i.test(s) || s.includes("06/2026");
-}
-
-async function fetchAba(aba, range="A1:BZ500") {
-  const enc = encodeURIComponent(`'${aba}'!${range}`);
-  const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${enc}?key=${API_KEY}`;
-  const r = await fetch(url);
-  if(!r.ok) throw new Error(`Erro na aba "${aba}": HTTP ${r.status}`);
-  const d = await r.json();
+async function fetchAba(aba,range="A1:BZ600"){
+  const enc=encodeURIComponent(`'${aba}'!${range}`);
+  const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SID}/values/${enc}?key=${KEY}`);
+  if(!r.ok)throw new Error(`Erro na aba "${aba}": HTTP ${r.status}`);
+  const d=await r.json();
   return d.values||[];
 }
 
-function setMsg(m) { const el=document.getElementById("loading-msg"); if(el) el.textContent=m; }
+function msg(m){const e=document.getElementById("lmsg");if(e)e.textContent=m;}
 
-async function carregar() {
+async function load(){
   document.getElementById("loading").style.display="flex";
   document.getElementById("main").style.display="none";
-  Object.values(charts).forEach(c=>c&&c.destroy&&c.destroy());
-  charts={};
+  Object.values(CH).forEach(c=>c&&c.destroy&&c.destroy());CH={};
+  try{
+    msg("Buscando Diarização Canal Faturamento...");
+    const rawF=await fetchAba("Diarização Canal Faturamento");
+    msg("Buscando Diarização Canal Vendas...");
+    const rawV=await fetchAba("Diarização Canal Vendas");
+    msg("Processando dados de Junho/2026...");
 
-  try {
-    setMsg("Buscando Diarização Canal Faturamento...");
-    const rawFat = await fetchAba("Diarização Canal Faturamento");
+    // Linhas de dados começam na linha 4 (índice 3) - pula 3 linhas de cabeçalho
+    const rowsF=rawF.slice(3).filter(r=>r[FC.DATA]&&String(r[FC.DATA]).match(/\d{2}\/\d{2}/));
+    const rowsV=rawV.slice(3).filter(r=>r[VC.DATA]&&String(r[VC.DATA]).match(/\d{2}\/\d{2}/));
 
-    // Pula linhas de cabeçalho (1,2,3) — dados começam na linha 4 (índice 3)
-    const rows = rawFat.slice(3);
+    // Filtra junho
+    const junF=rowsF.filter(r=>isJun(r[FC.DATA]));
+    const junV=rowsV.filter(r=>isJun(r[VC.DATA]));
 
-    // Filtra junho 2026
-    const junhoRows = rows.filter(r => isJun26(r[COL.DATA]));
-    const dados = junhoRows.length > 0 ? junhoRows : rows.filter(r => r[COL.DATA] && String(r[COL.DATA]).match(/\d{2}\/\d{2}/));
+    const dadosF=junF.length>0?junF:rowsF;
+    const dadosV=junV.length>0?junV:rowsV;
 
-    // Última linha com realizado > 0
-    const comReal = dados.filter(r => parseBRL(r[COL.REAL_ACUM]) > 0);
-    const ultima  = comReal[comReal.length-1] || dados[0] || [];
+    // Última linha com realizado > 0 (dado mais recente)
+    const comR=dadosF.filter(r=>$BRL(r[FC.REAL_ACUM])>0);
+    const ult=comR[comR.length-1]||dadosF[0]||[];
 
     // KPIs principais da última linha com dado
-    const metaGeral  = parseBRL(ultima[COL.META_GERAL]);
-    const realAcum   = parseBRL(ultima[COL.REAL_ACUM]);
-    const pctAcum    = parsePct(ultima[COL.PCT_ACUM]) || (metaGeral>0?(realAcum/metaGeral)*100:0);
-    const falta      = metaGeral - realAcum;
-    const margem     = parsePct(ultima[COL.MARGEM]);
-    const dataAtual  = ultima[COL.DATA] || "";
+    const metaG  =$BRL(ult[FC.META_GERAL]);
+    const realG  =$BRL(ult[FC.REAL_ACUM]);
+    const pctG   =$PCT(ult[FC.PCT_ACUM])||(metaG>0?(realG/metaG)*100:0);
+    const difPct =$PCT(ult[FC.DIF_PCT]);
+    const vendaA =$BRL(ult[FC.VENDA_ACUM]);
+    const cmvG   =$PCT(ult[FC.CMV_GERAL]);
+    const cmvCD  =$PCT(ult[FC.CMV_CD]);
+    const cmvL   =$PCT(ult[FC.CMV_LOJAS]);
+    const margem =$PCT(ult[FC.MARGEM]);
+    const ticket =$BRL(ult[FC.TICKET]);
+    const data   =ult[FC.DATA]||"";
 
-    // CD
-    const metaCD  = parseBRL(ultima[COL.META_CD]);
-    const realCD  = parseBRL(ultima[COL.REAL_CD]);
-    const pctCD   = parsePct(ultima[COL.PCT_CD]) || (metaCD>0?(realCD/metaCD)*100:0);
+    // Evolução diária faturamento
+    const evolF=dadosF.map(r=>({
+      data:String(r[FC.DATA]).slice(0,5),
+      meta:$BRL(r[FC.META_GERAL]),
+      real:$BRL(r[FC.REAL_ACUM]),
+      pct:$PCT(r[FC.PCT_ACUM]),
+      cmv:$PCT(r[FC.CMV_GERAL]),
+    })).filter(e=>e.meta>0||e.real>0);
 
-    // Lojas
-    const metaLojas = parseBRL(ultima[COL.META_LOJAS]);
-    const realLojas = parseBRL(ultima[COL.REAL_LOJAS]);
-    const pctLojas  = parsePct(ultima[COL.PCT_LOJAS]) || (metaLojas>0?(realLojas/metaLojas)*100:0);
+    // Canal de Vendas - última linha com dado
+    const comRV=dadosV.filter(r=>$BRL(r[VC.REAL_ACUM])>0);
+    const ultV=comRV[comRV.length-1]||dadosV[0]||[];
 
-    // 1P
-    const meta1P = parseBRL(ultima[COL.META_1P]);
-    const real1P = parseBRL(ultima[COL.REAL_1P]);
-    const pct1P  = parsePct(ultima[COL.PCT_1P]) || (meta1P>0?(real1P/meta1P)*100:0);
+    const canaisVendas=[
+      {canal:"3.0 Vendas",    meta:$BRL(ultV[VC.META_30]),  real:$BRL(ultV[VC.REAL_30]),  pct:$PCT(ultV[VC.PCT_30])},
+      {canal:"OUT Marketplace",meta:$BRL(ultV[VC.META_OUT]), real:$BRL(ultV[VC.REAL_OUT]), pct:$PCT(ultV[VC.PCT_OUT])},
+      {canal:"App Oscar",     meta:$BRL(ultV[VC.META_APP]),  real:$BRL(ultV[VC.REAL_APP]),  pct:$PCT(ultV[VC.PCT_APP])},
+      {canal:"Site Oscar",    meta:$BRL(ultV[VC.META_SITE]), real:$BRL(ultV[VC.REAL_SITE]), pct:$PCT(ultV[VC.PCT_SITE])},
+      {canal:"Paquetá Calç.", meta:$BRL(ultV[VC.META_PAQ]),  real:$BRL(ultV[VC.REAL_PAQ]),  pct:$PCT(ultV[VC.PCT_PAQ])},
+      {canal:"Paquetá Esp.",  meta:$BRL(ultV[VC.META_PES]),  real:$BRL(ultV[VC.REAL_PES]),  pct:$PCT(ultV[VC.PCT_PES])},
+      {canal:"Diadora OUT",   meta:$BRL(ultV[VC.META_DIA]),  real:$BRL(ultV[VC.REAL_DIA]),  pct:$PCT(ultV[VC.PCT_DIA])},
+    ].map(c=>({...c,gap:c.real-c.meta,pct:c.pct||(c.meta>0?(c.real/c.meta)*100:0)}))
+     .filter(c=>c.meta>0||c.real>0);
 
-    // Canais para o ranking
-    const canais = [
-      { canal:"Geral",        meta:metaGeral, realizado:realAcum,  pct:pctAcum,  gap:realAcum-metaGeral },
-      { canal:"CD",           meta:metaCD,    realizado:realCD,    pct:pctCD,    gap:realCD-metaCD },
-      { canal:"Lojas Oscar",  meta:metaLojas, realizado:realLojas, pct:pctLojas, gap:realLojas-metaLojas },
-      { canal:"1P Total",     meta:meta1P,    realizado:real1P,    pct:pct1P,    gap:real1P-meta1P },
-    ].filter(c => c.meta > 0 || c.realizado > 0);
+    // Evolução vendas
+    const evolV=dadosV.map(r=>({
+      data:String(r[VC.DATA]).slice(0,5),
+      meta:$BRL(r[VC.META_GERAL]),
+      real:$BRL(r[VC.REAL_ACUM]),
+      pct:$PCT(r[VC.PCT_ACUM]),
+    })).filter(e=>e.meta>0||e.real>0);
 
-    // CMV / Margem
-    const cmvCD    = parsePct(ultima[COL.CMV_CD]);
-    const cmvLojas = parsePct(ultima[COL.CMV_LOJAS]);
-    const cmvGeral = parsePct(ultima[COL.CMV_GERAL]);
-
-    // Evolução diária junho
-    const evolucao = dados
-      .filter(r => r[COL.DATA] && (parseBRL(r[COL.META_GERAL])>0 || parseBRL(r[COL.REAL_ACUM])>0))
-      .map(r => ({
-        data: String(r[COL.DATA]).slice(0,5),
-        meta: parseBRL(r[COL.META_GERAL]),
-        real: parseBRL(r[COL.REAL_ACUM]),
-        pct:  parsePct(r[COL.PCT_ACUM]),
-      }));
-
-    // Pagamento (fixo do PDF — virá da planilha se tiver aba específica)
-    const PAGAMENTO = [
-      {name:"Cartão Crédito",pct:37.09,cor:CORES[0]},
-      {name:"FestCard",      pct:26.06,cor:CORES[1]},
-      {name:"Pix",           pct:22.28,cor:CORES[2]},
-      {name:"Credsystem",    pct:5.01, cor:CORES[3]},
-      {name:"Vale",          pct:3.11, cor:CORES[4]},
-      {name:"Outros",        pct:6.45, cor:CORES[5]},
-    ];
-
-    renderDashboard({
-      dataAtual, metaGeral, realAcum, pctAcum, falta,
-      margem, cmvCD, cmvLojas, cmvGeral,
-      metaCD, realCD, pctCD,
-      metaLojas, realLojas, pctLojas,
-      meta1P, real1P, pct1P,
-      canais, evolucao, PAGAMENTO,
-      totalDias: dados.length,
-    });
-
-  } catch(e) {
+    render({data,metaG,realG,pctG,difPct,vendaA,cmvG,cmvCD,cmvL,margem,ticket,evolF,evolV,canaisVendas,dadosF});
+  }catch(e){
     document.getElementById("loading").style.display="none";
     document.getElementById("main").style.display="block";
-    document.getElementById("main").innerHTML=`
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;padding:20px;text-align:center">
-        <div style="font-size:40px">⚠️</div>
-        <div style="color:#f87171;font-size:15px;font-weight:700">Erro ao carregar dados</div>
-        <div style="color:#94a3b8;font-size:13px;max-width:460px;line-height:1.6">${e.message}</div>
-        <button class="btn" onclick="carregar()">↻ Tentar novamente</button>
-      </div>`;
+    document.getElementById("main").innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;padding:20px;text-align:center">
+      <div style="font-size:40px">⚠️</div>
+      <div style="color:#f87171;font-size:15px;font-weight:700">Erro ao carregar dados</div>
+      <div style="color:#94a3b8;font-size:13px;max-width:460px;line-height:1.6">${e.message}</div>
+      <button class="btn" onclick="load()">↻ Tentar novamente</button></div>`;
   }
 }
 
-function renderDashboard(d) {
-  const hoje = new Date().toLocaleDateString("pt-BR");
-  const { dataAtual, metaGeral, realAcum, pctAcum, falta,
-          margem, cmvCD, cmvLojas, cmvGeral,
-          metaCD, realCD, pctCD,
-          metaLojas, realLojas, pctLojas,
-          meta1P, real1P, pct1P,
-          canais, evolucao, PAGAMENTO } = d;
-
-  const corTotal = corPct(pctAcum);
-
-  // Alerta inteligente
-  const crit  = canais.filter(c=>c.pct<50);
-  const atenc = canais.filter(c=>c.pct>=50&&c.pct<80);
-  const dest  = canais.filter(c=>c.pct>=100);
-
-  const alertaHTML = `<div class="alerta">
-    <div class="alerta-titulo">🔔 Inteligência do Dia · ${dataAtual}</div>
-    <div class="alerta-grid">
-      ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)} (gap ${fmtBRL(c.gap)})</div>`).join("")}</div>`:""}
-      ${atenc.length?`<div><div style="color:#fbbf24;font-weight:700;font-size:11px;margin-bottom:4px">⚠️ ATENÇÃO — entre 50% e 80%</div>${atenc.map(c=>`<div style="color:#fde68a;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)}</div>`).join("")}</div>`:""}
-      ${dest.length?`<div><div style="color:#4ade80;font-weight:700;font-size:11px;margin-bottom:4px">✅ ACIMA DA META</div>${dest.map(c=>`<div style="color:#86efac;font-size:12px;line-height:1.8">• ${c.canal}: ${fmtPct(c.pct)}</div>`).join("")}</div>`:""}
-    </div>
+function kpi(ic,lb,vl,sb,pt,cr){
+  const c=cr||(pt!==undefined?COR(pt):"#e2e8f0");
+  return`<div class="kpi">
+    <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${ic} ${lb}</div>
+    <div style="font-size:24px;font-weight:800;color:${c};line-height:1.1">${vl}</div>
+    ${sb?`<div style="font-size:12px;color:#64748b;margin-top:4px">${sb}</div>`:""}
+    ${pt!==undefined?`<div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px"><span>Atingimento</span><span style="color:${COR(pt)};font-weight:700">${P(pt)}</span></div>
+    <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-top:3px"><div style="width:${Math.min(pt,100)}%;height:6px;border-radius:99px;background:${COR(pt)}"></div></div>`:""}
   </div>`;
+}
 
-  function kpi(icon,label,val,sub,pct,cor) {
-    const c=cor||(pct!==undefined?corPct(pct):"#e2e8f0");
-    return `<div class="kpi">
-      <div class="kpi-label">${icon} ${label}</div>
-      <div class="kpi-value" style="color:${c}">${val}</div>
-      ${sub?`<div class="kpi-sub">${sub}</div>`:""}
-      ${pct!==undefined?`
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px">
-          <span>Atingimento</span><span style="color:${corPct(pct)};font-weight:700">${fmtPct(pct)}</span>
-        </div>
-        <div class="kpi-bar-bg"><div class="kpi-bar" style="width:${Math.min(pct,100)}%;background:${corPct(pct)}"></div></div>`:""}
-    </div>`;
-  }
+function cCard(c){
+  const cor=COR(c.pct);
+  return`<div style="background:rgba(255,255,255,0.04);border:1px solid ${cor}33;border-radius:14px;padding:16px 18px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:700;color:#e2e8f0">${c.canal}</div>
+      <div style="font-size:20px;font-weight:800;color:${cor}">${P(c.pct)}</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+      <div><div style="font-size:10px;color:#64748b">META</div><div style="font-size:12px;font-weight:600;color:#94a3b8">${R(c.meta)}</div></div>
+      <div><div style="font-size:10px;color:#64748b">REALIZADO</div><div style="font-size:12px;font-weight:600;color:#e2e8f0">${R(c.real)}</div></div>
+      <div><div style="font-size:10px;color:#64748b">GAP</div><div style="font-size:12px;font-weight:600;color:${c.gap>=0?OK:ERR}">${c.gap>=0?"+":""}${R(c.gap)}</div></div>
+    </div>
+    <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px"><div style="width:${Math.min(c.pct,100)}%;height:5px;border-radius:99px;background:${cor}"></div></div>
+  </div>`;
+}
 
-  function canalCard(c) {
-    const cor=corPct(c.pct);
-    return `<div class="canal-card" style="background:rgba(255,255,255,0.04);border:1px solid ${cor}33">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:700;color:#e2e8f0">${c.canal}</div>
-        <div style="font-size:20px;font-weight:800;color:${cor}">${fmtPct(c.pct)}</div>
-      </div>
-      <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
-        <div><div style="font-size:10px;color:#64748b">META</div><div style="font-size:12px;font-weight:600;color:#94a3b8">${fmtBRL(c.meta)}</div></div>
-        <div><div style="font-size:10px;color:#64748b">REALIZADO</div><div style="font-size:12px;font-weight:600;color:#e2e8f0">${fmtBRL(c.realizado)}</div></div>
-        <div><div style="font-size:10px;color:#64748b">GAP</div><div style="font-size:12px;font-weight:600;color:${c.gap>=0?C.ok:C.alert}">${c.gap>=0?"+":""}${fmtBRL(c.gap)}</div></div>
-      </div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px">
-        <div style="width:${Math.min(c.pct,100)}%;height:5px;border-radius:99px;background:${cor}"></div>
-      </div>
-    </div>`;
-  }
+function render(d){
+  const hoje=new Date().toLocaleDateString("pt-BR");
+  const {data,metaG,realG,pctG,difPct,vendaA,cmvG,cmvCD,cmvL,margem,ticket,evolF,evolV,canaisVendas,dadosF}=d;
+  const falta=metaG-realG;
+  const crit=canaisVendas.filter(c=>c.pct<50);
+  const atenc=canaisVendas.filter(c=>c.pct>=50&&c.pct<80);
+  const dest=canaisVendas.filter(c=>c.pct>=100);
 
-  document.getElementById("main").innerHTML = `
+  const PAGT=[
+    {name:"Cartão Crédito",pct:37.09,cor:CORES[0]},
+    {name:"FestCard",pct:26.06,cor:CORES[1]},
+    {name:"Pix",pct:22.28,cor:CORES[2]},
+    {name:"Credsystem",pct:5.01,cor:CORES[3]},
+    {name:"Vale",pct:3.11,cor:CORES[4]},
+    {name:"Outros",pct:6.45,cor:CORES[5]},
+  ];
+
+  document.getElementById("main").innerHTML=`
   <div class="topo">
     <div>
       <div class="titulo">📊 Dashboard E-commerce · Grupo Oscar</div>
-      <div class="sub">Ref. ${dataAtual} · Junho/2026 · Atualizado em ${hoje}</div>
+      <div class="sub">Ref. ${data} · Junho/2026 · Atualizado ${hoje}</div>
     </div>
-    <div class="badges">
-      <span class="badge badge-green">✓ Google Sheets Live</span>
-      <span class="badge badge-blue">📅 Jun/26</span>
-      <button class="btn" onclick="carregar()">↻ Atualizar</button>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="badge badge-g">✓ Google Sheets Live</span>
+      <span class="badge badge-b">📅 Jun/26</span>
+      <button class="btn" onclick="load()">↻ Atualizar</button>
     </div>
   </div>
 
   <div class="tab-row">
-    <button class="tab active"   id="tab-geral"     onclick="showTab('geral')">📈 Geral</button>
-    <button class="tab inactive" id="tab-canais"    onclick="showTab('canais')">🏪 Canais</button>
-    <button class="tab inactive" id="tab-margem"    onclick="showTab('margem')">💰 Margem</button>
-    <button class="tab inactive" id="tab-pagamento" onclick="showTab('pagamento')">💳 Pagamento</button>
-    <button class="tab inactive" id="tab-tabela"    onclick="showTab('tabela')">📋 Tabela</button>
+    <button class="tab on"  id="tb-fat"  onclick="tab('fat')">📈 Faturamento</button>
+    <button class="tab off" id="tb-vend" onclick="tab('vend')">🏪 Canal Vendas</button>
+    <button class="tab off" id="tb-marg" onclick="tab('marg')">💰 Margem</button>
+    <button class="tab off" id="tb-pag"  onclick="tab('pag')">💳 Pagamento</button>
+    <button class="tab off" id="tb-tab"  onclick="tab('tab')">📋 Tabela</button>
   </div>
 
-  ${alertaHTML}
-
-  <!-- GERAL -->
-  <div class="section active" id="sec-geral">
-    <div class="sec-label">Visão Geral · Acumulado até ${dataAtual}</div>
-    <div class="grid-kpi">
-      ${kpi("🎯","GMV Realizado Acumulado",fmtBRL(realAcum),`Meta: ${fmtBRL(metaGeral)}`,pctAcum,corTotal)}
-      ${kpi("⚡","Falta para Bater a Meta",fmtBRL(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante para 100%",undefined,falta<=0?C.ok:C.alert)}
-      ${kpi("🏪","GMV CD Acumulado",fmtBRL(realCD),`Meta: ${fmtBRL(metaCD)}`,pctCD)}
-      ${kpi("🏬","GMV Lojas Oscar",fmtBRL(realLojas),`Meta: ${fmtBRL(metaLojas)}`,pctLojas)}
-      ${kpi("📦","Total 1P",fmtBRL(real1P),`Meta: ${fmtBRL(meta1P)}`,pct1P)}
-      ${kpi("📊","% Atingimento Geral",fmtPct(pctAcum),`Gap: ${pctAcum>=100?"+":"−"}${fmtPct(Math.abs(100-pctAcum))}`,undefined,corTotal)}
+  <div class="alerta">
+    <div style="font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:10px">🔔 Inteligência do Dia · ${data}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:20px">
+      ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)} (gap ${R(c.gap)})</div>`).join("")}</div>`:""}
+      ${atenc.length?`<div><div style="color:#fbbf24;font-weight:700;font-size:11px;margin-bottom:4px">⚠️ ATENÇÃO — 50% a 80%</div>${atenc.map(c=>`<div style="color:#fde68a;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)}</div>`).join("")}</div>`:""}
+      ${dest.length?`<div><div style="color:#4ade80;font-weight:700;font-size:11px;margin-bottom:4px">✅ ACIMA DA META</div>${dest.map(c=>`<div style="color:#86efac;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)}</div>`).join("")}</div>`:""}
+      ${!crit.length&&!atenc.length&&!dest.length?`<div style="color:#94a3b8;font-size:12px">Carregando análise dos canais...</div>`:""}
     </div>
-
-    <div class="sec-label">Evolução Diária · Meta vs Realizado · Junho</div>
-    <div class="card"><div style="height:230px"><canvas id="chartEvol"></canvas></div></div>
-
-    <div class="sec-label">Meta vs Realizado por Canal</div>
-    <div class="card"><div style="height:220px"><canvas id="chartCanais"></canvas></div></div>
   </div>
 
-  <!-- CANAIS -->
-  <div class="section" id="sec-canais">
-    <div class="sec-label">Ranking de Atingimento</div>
-    <div class="card"><div style="height:${canais.length*50+30}px"><canvas id="chartRank"></canvas></div></div>
-    <div class="sec-label">Performance Detalhada</div>
-    <div class="grid-2">${canais.map(canalCard).join("")}</div>
+  <!-- FATURAMENTO -->
+  <div class="sec on" id="s-fat">
+    <div class="sl">Faturamento · Acumulado até ${data}</div>
+    <div class="g3">
+      ${kpi("🎯","GMV Realizado",R(realG),`Meta: ${R(metaG)}`,pctG)}
+      ${kpi("⚡","Falta para Meta",R(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante p/ 100%",undefined,falta<=0?OK:ERR)}
+      ${kpi("📊","% Atingimento",P(pctG),`Gap: ${P(difPct)}`,undefined,COR(pctG))}
+      ${kpi("💹","Venda Acumulada",R(vendaA),"Tendência regressão",undefined,"#a5b4fc")}
+      ${ticket>0?kpi("🎫","Ticket Médio",R(ticket),"Valor médio do pedido",undefined,"#f59e0b"):""}
+      ${kpi("📦","Meta Total Mês",R(metaG),"Meta junho/2026",undefined,"#64748b")}
+    </div>
+    <div class="sl">Evolução Diária · Faturamento Junho</div>
+    <div class="card"><div style="height:240px"><canvas id="cEvF"></canvas></div></div>
+    <div class="sl">% Atingimento Diário</div>
+    <div class="card"><div style="height:200px"><canvas id="cPctF"></canvas></div></div>
+  </div>
+
+  <!-- CANAL VENDAS -->
+  <div class="sec" id="s-vend">
+    <div class="sl">Ranking por Canal · Acumulado até ${data}</div>
+    <div class="card"><div style="height:${Math.max(canaisVendas.length*50+40,200)}px"><canvas id="cRank"></canvas></div></div>
+    <div class="sl">Performance Detalhada por Canal</div>
+    <div class="g2">${canaisVendas.map(cCard).join("")}</div>
+    <div class="sl">Evolução Diária · Canal Vendas</div>
+    <div class="card"><div style="height:220px"><canvas id="cEvV"></canvas></div></div>
   </div>
 
   <!-- MARGEM -->
-  <div class="section" id="sec-margem">
-    <div class="sec-label">CMV · Margem Bruta · Acumulado ${dataAtual}</div>
-    <div class="grid-3">
-      ${[
-        {label:"Geral",      cmv:cmvGeral, mb: cmvGeral>0?100-cmvGeral:57.57},
-        {label:"CD",         cmv:cmvCD,    mb: cmvCD>0?100-cmvCD:57.46},
-        {label:"Lojas Oscar",cmv:cmvLojas, mb: cmvLojas>0?100-cmvLojas:57.60},
-      ].map(m=>`<div class="kpi">
-        <div class="kpi-label">${m.label}</div>
-        <div style="display:flex;gap:16px;margin:8px 0">
-          <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${C.alert}">${fmtPct(m.cmv||42.43)}</div></div>
-          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${C.ok}">${fmtPct(m.mb||57.57)}</div></div>
+  <div class="sec" id="s-marg">
+    <div class="sl">CMV · Margem Bruta · Ref. ${data}</div>
+    <div class="g3">
+      ${[{l:"Geral",cmv:cmvG||42.43},{l:"CD",cmv:cmvCD||42.54},{l:"Lojas",cmv:cmvL||42.40}].map(m=>`
+      <div class="kpi">
+        <div style="font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:12px">${m.l}</div>
+        <div style="display:flex;gap:16px;margin-bottom:12px">
+          <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${ERR}">${P(m.cmv)}</div></div>
+          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${OK}">${P(100-m.cmv)}</div></div>
         </div>
-        <div class="kpi-bar-bg"><div class="kpi-bar" style="width:${m.mb||57.57}%;background:${C.ok}"></div></div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:8px;overflow:hidden">
+          <div style="width:${100-m.cmv}%;height:100%;background:${OK};border-radius:99px"></div>
+        </div>
       </div>`).join("")}
     </div>
-    <div class="sec-label">CMV vs Margem Bruta</div>
-    <div class="card"><div style="height:220px"><canvas id="chartMargem"></canvas></div></div>
+    <div class="sl">CMV vs Margem por Canal</div>
+    <div class="card"><div style="height:220px"><canvas id="cMarg"></canvas></div></div>
+    <div class="sl">Evolução CMV Diária</div>
+    <div class="card"><div style="height:200px"><canvas id="cCMV"></canvas></div></div>
   </div>
 
   <!-- PAGAMENTO -->
-  <div class="section" id="sec-pagamento">
-    <div class="sec-label">Mix de Meios de Pagamento</div>
+  <div class="sec" id="s-pag">
+    <div class="sl">Mix de Meios de Pagamento</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
-      <div class="card" style="margin-bottom:0"><div style="height:280px"><canvas id="chartPag"></canvas></div></div>
+      <div class="card" style="margin-bottom:0"><div style="height:280px"><canvas id="cPag"></canvas></div></div>
       <div>
-        ${PAGAMENTO.map(p=>`<div class="pag-item">
-          <div class="pag-dot" style="background:${p.cor}"></div>
+        ${PAGT.map(p=>`<div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border-radius:10px;padding:12px 16px;margin-bottom:10px">
+          <div style="width:12px;height:12px;border-radius:50%;background:${p.cor};flex-shrink:0"></div>
           <div style="flex:1;font-size:13px;color:#e2e8f0">${p.name}</div>
           <div style="font-size:16px;font-weight:700;color:${p.cor}">${p.pct}%</div>
-          <div class="pag-bar-bg"><div class="pag-bar" style="width:${p.pct}%;background:${p.cor}"></div></div>
+          <div style="width:80px;background:rgba(255,255,255,0.06);border-radius:99px;height:5px">
+            <div style="width:${p.pct}%;height:5px;border-radius:99px;background:${p.cor}"></div>
+          </div>
         </div>`).join("")}
-        <div class="insight-box">💡 <strong>Cartão + FestCard</strong> = <strong>${(37.09+26.06).toFixed(1)}%</strong> dos pagamentos<br>Pix em 3º com <strong>22,28%</strong></div>
+        <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:#a5b4fc;margin-top:4px;line-height:1.6">
+          💡 <strong>Cartão + FestCard</strong> = <strong>63,15%</strong> dos pagamentos<br>Pix em 3º com <strong>22,28%</strong>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- TABELA -->
-  <div class="section" id="sec-tabela">
-    <div class="sec-label">Diarização · Junho 2026 · ${evolucao.length} dias</div>
+  <div class="sec" id="s-tab">
+    <div class="sl">Diarização Canal Faturamento · Junho 2026 · ${evolF.length} dias</div>
     <div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
-      <table class="dados">
-        <thead><tr><th>Data</th><th>Meta Geral</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP</th></tr></thead>
-        <tbody>
-          ${evolucao.map(e=>{
-            const gap=e.real-e.meta;
-            return `<tr>
-              <td>${e.data}</td>
-              <td>${fmtBRL(e.meta)}</td>
-              <td>${fmtBRL(e.real)}</td>
-              <td style="color:${corPct(e.pct)};font-weight:700">${fmtPct(e.pct)}</td>
-              <td style="color:${gap>=0?C.ok:C.alert}">${gap>=0?"+":""}${fmtBRL(gap)}</td>
-            </tr>`;
-          }).join("")}
-        </tbody>
+      <table class="t">
+        <thead><tr><th>Data</th><th>Meta Diária</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP R$</th><th>CMV</th></tr></thead>
+        <tbody>${evolF.map(e=>{const g=e.real-e.meta;return`<tr>
+          <td>${e.data}</td>
+          <td>${R(e.meta)}</td>
+          <td>${R(e.real)}</td>
+          <td style="color:${COR(e.pct)};font-weight:700">${P(e.pct)}</td>
+          <td style="color:${g>=0?OK:ERR}">${g>=0?"+":""}${R(g)}</td>
+          <td>${e.cmv>0?P(e.cmv):"-"}</td>
+        </tr>`;}).join("")}</tbody>
       </table>
     </div>
   </div>
 
-  <div class="rodape">Dashboard E-commerce · Grupo Oscar · Google Sheets Live · ${hoje}</div>
-  `;
+  <div class="rodape">Dashboard E-commerce · Grupo Oscar · Google Sheets Live · ${hoje}</div>`;
 
   document.getElementById("loading").style.display="none";
   document.getElementById("main").style.display="block";
 
-  const baseOpts = {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:"#94a3b8",font:{size:11}}},
-             tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,titleColor:"#e2e8f0",bodyColor:"#94a3b8"}},
-    scales:{x:{ticks:{color:"#64748b",font:{size:11}},grid:{color:"#1e293b"}},
-            y:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}}}
-  };
+  const BO={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:"#94a3b8",font:{size:11}}},tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,titleColor:"#e2e8f0",bodyColor:"#94a3b8"}},
+    scales:{x:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}},y:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}}}};
 
-  // Evolução
-  if(evolucao.length>0) {
-    charts.evol = new Chart(document.getElementById("chartEvol"),{type:"bar",
-      data:{labels:evolucao.map(e=>e.data),datasets:[
-        {label:"Meta",     data:evolucao.map(e=>e.meta), backgroundColor:"#334155",borderRadius:3},
-        {label:"Realizado",data:evolucao.map(e=>e.real), backgroundColor:"#B91C1C",borderRadius:3}
-      ]},
-      options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>fmtBRL(v)}}}}
-    });
+  // Evolução faturamento
+  if(evolF.length>0){
+    CH.evF=new Chart(document.getElementById("cEvF"),{type:"bar",
+      data:{labels:evolF.map(e=>e.data),datasets:[
+        {label:"Meta",data:evolF.map(e=>e.meta),backgroundColor:"#334155",borderRadius:3},
+        {label:"Realizado",data:evolF.map(e=>e.real),backgroundColor:PRI,borderRadius:3}
+      ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
+    // % diário
+    CH.pctF=new Chart(document.getElementById("cPctF"),{type:"line",
+      data:{labels:evolF.map(e=>e.data),datasets:[
+        {label:"% Atingimento",data:evolF.map(e=>e.pct),borderColor:"#6366f1",backgroundColor:"rgba(99,102,241,0.1)",tension:.4,fill:true,pointRadius:3},
+        {label:"Meta 100%",data:evolF.map(()=>100),borderColor:"#334155",borderDash:[5,5],pointRadius:0}
+      ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
   }
 
-  // Canais meta vs real
-  charts.canais = new Chart(document.getElementById("chartCanais"),{type:"bar",
-    data:{labels:canais.map(c=>c.canal),datasets:[
-      {label:"Meta",     data:canais.map(c=>c.meta),      backgroundColor:"#334155",borderRadius:4},
-      {label:"Realizado",data:canais.map(c=>c.realizado),  backgroundColor:"#B91C1C",borderRadius:4}
-    ]},
-    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,ticks:{...baseOpts.scales.y.ticks,callback:v=>fmtBRL(v)}}}}
-  });
-
-  // Ranking
-  const sorted = [...canais].sort((a,b)=>b.pct-a.pct);
-  charts.rank = new Chart(document.getElementById("chartRank"),{type:"bar",
-    data:{labels:sorted.map(c=>c.canal),
-          datasets:[{label:"% Atingido",data:sorted.map(c=>+c.pct.toFixed(1)),
-            backgroundColor:sorted.map(c=>corPct(c.pct)),borderRadius:4}]},
-    options:{...baseOpts,indexAxis:"y",
-      scales:{x:{...baseOpts.scales.x,ticks:{...baseOpts.scales.x.ticks,callback:v=>`${v}%`}},
-              y:{...baseOpts.scales.y,ticks:{color:"#94a3b8",font:{size:12}}}}}
-  });
+  // Ranking canais
+  if(canaisVendas.length>0){
+    const sorted=[...canaisVendas].sort((a,b)=>b.pct-a.pct);
+    CH.rank=new Chart(document.getElementById("cRank"),{type:"bar",
+      data:{labels:sorted.map(c=>c.canal),datasets:[{label:"% Atingido",data:sorted.map(c=>+c.pct.toFixed(1)),backgroundColor:sorted.map(c=>COR(c.pct)),borderRadius:4}]},
+      options:{...BO,indexAxis:"y",scales:{x:{...BO.scales.x,ticks:{...BO.scales.x.ticks,callback:v=>`${v}%`}},y:{...BO.scales.y,ticks:{color:"#94a3b8",font:{size:11}}}}}});
+    // Evolução vendas
+    if(evolV.length>0){
+      CH.evV=new Chart(document.getElementById("cEvV"),{type:"bar",
+        data:{labels:evolV.map(e=>e.data),datasets:[
+          {label:"Meta",data:evolV.map(e=>e.meta),backgroundColor:"#334155",borderRadius:3},
+          {label:"Realizado",data:evolV.map(e=>e.real),backgroundColor:"#22d3ee",borderRadius:3}
+        ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
+    }
+  }
 
   // Margem
-  const mCMV = [cmvGeral||42.43, cmvCD||42.54, cmvLojas||42.40];
-  const mMB  = mCMV.map(v=>+(100-v).toFixed(2));
-  charts.marg = new Chart(document.getElementById("chartMargem"),{type:"bar",
-    data:{labels:["Geral","CD","Lojas Oscar"],datasets:[
-      {label:"CMV",         data:mCMV, backgroundColor:C.alert,borderRadius:4},
-      {label:"Margem Bruta",data:mMB,  backgroundColor:C.ok,   borderRadius:4}
-    ]},
-    options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales.y,max:100,ticks:{...baseOpts.scales.y.ticks,callback:v=>`${v}%`}}}}
-  });
+  const mD=[{l:"Geral",cmv:cmvG||42.43},{l:"CD",cmv:cmvCD||42.54},{l:"Lojas",cmv:cmvL||42.40}];
+  CH.marg=new Chart(document.getElementById("cMarg"),{type:"bar",
+    data:{labels:mD.map(m=>m.l),datasets:[
+      {label:"CMV",data:mD.map(m=>m.cmv),backgroundColor:ERR,borderRadius:4},
+      {label:"Margem Bruta",data:mD.map(m=>+(100-m.cmv).toFixed(2)),backgroundColor:OK,borderRadius:4}
+    ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,max:100,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
+  // CMV diário
+  const cmvDia=evolF.filter(e=>e.cmv>0);
+  if(cmvDia.length>0){
+    CH.cmv=new Chart(document.getElementById("cCMV"),{type:"line",
+      data:{labels:cmvDia.map(e=>e.data),datasets:[{label:"CMV Diário %",data:cmvDia.map(e=>e.cmv),borderColor:ERR,backgroundColor:"rgba(220,38,38,0.1)",tension:.4,fill:true,pointRadius:3}]},
+      options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
+  }
 
   // Pagamento
-  charts.pag = new Chart(document.getElementById("chartPag"),{type:"doughnut",
-    data:{labels:PAGAMENTO.map(p=>p.name),
-          datasets:[{data:PAGAMENTO.map(p=>p.pct),backgroundColor:PAGAMENTO.map(p=>p.cor),borderColor:"#0a0f1e",borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:"bottom",labels:{color:"#94a3b8",font:{size:11},padding:12}},
-               tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}
-  });
+  CH.pag=new Chart(document.getElementById("cPag"),{type:"doughnut",
+    data:{labels:PAGT.map(p=>p.name),datasets:[{data:PAGT.map(p=>p.pct),backgroundColor:PAGT.map(p=>p.cor),borderColor:"#0a0f1e",borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:"#94a3b8",font:{size:11},padding:12}},tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}});
 }
 
-function showTab(t) {
-  ["geral","canais","margem","pagamento","tabela"].forEach(s=>{
-    document.getElementById(`sec-${s}`).className="section"+(s===t?" active":"");
-    document.getElementById(`tab-${s}`).className="tab "+(s===t?"active":"inactive");
+function tab(t){
+  ["fat","vend","marg","pag","tab"].forEach(s=>{
+    document.getElementById(`s-${s}`).className="sec"+(s===t?" on":"");
+    document.getElementById(`tb-${s}`).className="tab "+(s===t?"on":"off");
   });
-  setTimeout(()=>Object.values(charts).forEach(c=>c&&c.resize&&c.resize()),50);
+  setTimeout(()=>Object.values(CH).forEach(c=>c&&c.resize&&c.resize()),50);
 }
 
-// Senha
-function verificarSenha() {
-  const senha = document.getElementById("input-senha").value;
-  if(senha === "oscar@ecom26") {
-    document.getElementById("tela-senha").style.display = "none";
-    document.getElementById("dashboard-wrapper").style.display = "block";
-    sessionStorage.setItem("auth","ok");
-    carregar();
-  } else {
-    document.getElementById("erro-senha").style.display = "block";
-    document.getElementById("input-senha").value = "";
-    document.getElementById("input-senha").focus();
+function auth(){
+  if(document.getElementById("pwd").value==="oscar@ecom26"){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+    sessionStorage.setItem("ok","1");
+    load();
+  }else{
+    document.getElementById("erropwd").style.display="block";
+    document.getElementById("pwd").value="";
+    document.getElementById("pwd").focus();
   }
 }
-if(sessionStorage.getItem("auth")==="ok") {
-  document.getElementById("tela-senha").style.display = "none";
-  document.getElementById("dashboard-wrapper").style.display = "block";
-  carregar();
+if(sessionStorage.getItem("ok")==="1"){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  load();
 }
 </script>
 </body>
