@@ -8,32 +8,28 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0f1e;color:#f1f5f9;font-family:'Inter',-apple-system,sans-serif;padding:20px;min-height:100vh}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-thumb{background:#334155;border-radius:99px}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:#334155;border-radius:99px}
 .topo{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
 .titulo{font-size:20px;font-weight:800;color:#fff}
 .sub{font-size:12px;color:#64748b;margin-top:3px}
 .badge{border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700}
-.badge-g{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
-.badge-b{background:#6366f122;color:#a5b4fc;border:1px solid #6366f144}
+.bg{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
+.bb{background:#6366f122;color:#a5b4fc;border:1px solid #6366f144}
 .btn{background:#B91C1C;color:#fff;border:none;border-radius:8px;padding:9px 20px;cursor:pointer;font-size:13px;font-weight:700}
 .btn:hover{opacity:.85}
-.tab-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .tab{padding:7px 16px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:none}
-.tab.on{background:#B91C1C;color:#fff}
-.tab.off{background:rgba(255,255,255,0.06);color:#94a3b8}
+.tab.on{background:#B91C1C;color:#fff}.tab.off{background:rgba(255,255,255,0.06);color:#94a3b8}
 .sl{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;margin-top:4px}
 .alerta{background:rgba(185,28,28,0.08);border:1px solid rgba(185,28,28,0.25);border-radius:14px;padding:16px 20px;margin-bottom:22px}
 .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px}
 .kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 20px}
 .card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 20px;margin-bottom:20px}
-.sec{display:none}
-.sec.on{display:block}
+.sec{display:none}.sec.on{display:block}
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px}
 .spin{width:48px;height:48px;border:3px solid rgba(185,28,28,0.2);border-top:3px solid #B91C1C;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .pulse{animation:pulse 1.5s ease infinite}
 .rodape{margin-top:28px;text-align:center;font-size:11px;color:#334155}
 table.t{width:100%;border-collapse:collapse;font-size:12px}
@@ -53,8 +49,9 @@ table.t td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color
     <input id="pwd" type="password" placeholder="Digite a senha"
       style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;color:#f1f5f9;font-size:14px;outline:none;margin-bottom:12px"
       onkeydown="if(event.key==='Enter')auth()"/>
-    <div id="erropwd" style="color:#f87171;font-size:12px;margin-bottom:12px;display:none">Senha incorreta.</div>
+    <div id="epwd" style="color:#f87171;font-size:12px;margin-bottom:12px;display:none">Senha incorreta.</div>
     <button onclick="auth()" style="width:100%;background:#B91C1C;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Entrar</button>
+    <div style="font-size:11px;color:#334155;margin-top:16px">Grupo Oscar · E-commerce · Jun/2026</div>
   </div>
 </div>
 
@@ -63,66 +60,76 @@ table.t td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color
     <div class="spin"></div>
     <div style="text-align:center">
       <div style="font-size:15px;font-weight:600;color:#e2e8f0">Carregando Dashboard E-commerce</div>
-      <div id="lmsg" class="pulse" style="font-size:12px;color:#475569;margin-top:6px">Conectando...</div>
+      <div id="lmsg" class="pulse" style="font-size:12px;color:#475569;margin-top:6px">Conectando ao Google Sheets...</div>
     </div>
   </div>
   <div id="main" style="display:none"></div>
 </div>
 
 <script>
-const KEY = "AIzaSyAC0G7Bnnaev84dgzCx6n9GKoKAsFZrFmM";
-const SID = "1J7jSMjAbD8RtKbKRzWOaEuy3K-sThifDDS_y7sMLUzw";
+const KEY="AIzaSyAC0G7Bnnaev84dgzCx6n9GKoKAsFZrFmM";
+const SID="1J7jSMjAbD8RtKbKRzWOaEuy3K-sThifDDS_y7sMLUzw";
 
-// COLUNAS EXATAS baseadas nos PDFs exportados da planilha
-// Aba Diarização Canal Faturamento
-const FC = {
+// ── ÍNDICES EXATOS verificados via API ──────────────────────────────────────
+// Canal Faturamento — linha de dado (ex: 01/06/2026)
+const F={
   DATA:1, DIA:2, PCT_DIAR:3,
   CMV_CD:4, CMV_LOJAS:5, CMV_GERAL:6, MARGEM:7,
-  META_GERAL:8,      // I - Meta GERAL
-  REAL_ACUM:9,       // J - Faturamento Realizado Acumulado  
-  PCT_ACUM:10,       // K - % Realizado Acumulado
-  DIF_PCT:11,        // L - Diferença %
-  TENDENCIA:12,      // M - Tendência
-  VENDA_ACUM:13,     // N - Venda acumulada
-  TX_CONV:14,        // O - TX conversão
-  FAROL:15,          // P - Farol
-  TICKET:16,         // Q - Ticket Médio
-  META_CD:17,        // R - Meta CD (índice 17 = coluna R... vamos buscar direto)
+  META_GERAL:8,    // R$ 282.089,55
+  REAL_ACUM:10,    // R$ 181.238,13  ← índice 10 (não 9!)
+  PCT_ACUM:11,     // 3,59%
+  DIF_PCT:12,      // -35,75%
+  VENDA_ACUM:15,   // R$ 181.238,13 (venda acumulada)
+  TICKET:18,       // R$ 319,25
+  META_CD:19,      // R$ 140.616,00
+  REAL_CD:21,      // R$ 10.201,81
+  PCT_CD:22,       // 0,40%
+  META_OUT:27,     // R$ 71.591,12
+  REAL_OUT:29,     // R$ 23.352,13
+  PCT_OUT:30,      // 1,82%
+  META_LOJAS:35,   // R$ 69.882,43
+  REAL_LOJAS:37,   // R$ 147.684,19
+  PCT_LOJAS:38,    // 6,48%
+  META_1P:56,      // R$ 210.498,43
+  REAL_1P:57,      // R$ 157.886,00
+  PCT_1P:58,       // 4,77%
 };
 
-// Aba Diarização Canal Vendas
-const VC = {
+// Canal Vendas — linha de dado (ex: 01/06/2026)
+const V={
   DATA:1, DIA:2, PCT_DIAR:3,
-  META_GERAL:4,      // E - Meta GERAL Vendas
-  REAL_ACUM:5,       // F - Realizado Acumulado
-  PCT_ACUM:6,        // G - % Realizado
-  DIF_PCT:7,         // H - Diferença %
-  TENDENCIA:8,       // I - Tendência
-  VENDA_ACUM:9,      // J - Venda acumulada
-  // Canais
-  META_30:11,   REAL_30:12,   PCT_30:13,    // 3.0 Vendas
-  META_OUT:16,  REAL_OUT:17,  PCT_OUT:18,   // OUT Marketplace
-  META_APP:21,  REAL_APP:22,  PCT_APP:23,   // App Oscar
-  META_SITE:26, REAL_SITE:27, PCT_SITE:28,  // Site Oscar (1p+3p)
-  META_PAQ:31,  REAL_PAQ:32,  PCT_PAQ:33,   // Paquetá Calçados
-  META_PES:36,  REAL_PES:37,  PCT_PES:38,   // Paquetá Esportes
-  META_DIA:41,  REAL_DIA:42,  PCT_DIA:43,   // Diadora OUT
+  META_GERAL:4,    // R$ 282.089,55
+  REAL_ACUM:6,     // R$ 181.238,13
+  PCT_ACUM:7,      // 4,38%
+  DIF_PCT:8,       // -35,75%
+  VENDA_ACUM:11,   // R$ 181.238,13
+  META_LOJAS_G:16, // R$ 108.500,00
+  REAL_LOJAS_G:18, // R$ 120.520,16
+  PCT_LOJAS_G:19,  // 2,91%
+  META_LOJAS:26,   // R$ 92.108,73
+  REAL_LOJAS:29,   // R$ 45.832,05
+  PCT_LOJAS:30,    // 3,57%
+  META_OUT:50,     // R$ 71.591,12
+  REAL_OUT:54,     // R$ 23.352,13
+  PCT_OUT:55,      // 2,82%
+  META_APP:59,     // R$ 28.206,90
+  REAL_APP:60,     // R$ 16.930,18
 };
 
-const OK="#16a34a",WARN="#d97706",ERR="#dc2626",PRI="#B91C1C";
-const CORES=["#6366f1","#f59e0b","#22d3ee","#10b981","#f43f5e","#a78bfa","#34d399","#fb923c"];
+const OK="#16a34a",WN="#d97706",ER="#dc2626",PR="#B91C1C";
+const CRS=["#6366f1","#f59e0b","#22d3ee","#10b981","#f43f5e","#a78bfa","#34d399","#fb923c"];
 let CH={};
 
 const R=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",minimumFractionDigits:0,maximumFractionDigits:0}).format(v||0);
 const P=v=>`${Number(v||0).toFixed(1)}%`;
-const COR=p=>p>=100?OK:p>=70?WARN:ERR;
+const CR=p=>p>=100?OK:p>=70?WN:ER;
 
-function $BRL(v){
-  if(!v)return 0;
+function $B(v){
+  if(!v||v==="#REF!"||v==="#N/A"||v==="#DIV/0!")return 0;
   return parseFloat(String(v).replace(/[R$\s]/g,"").replace(/\./g,"").replace(",","."))||0;
 }
-function $PCT(v){
-  if(!v)return 0;
+function $P(v){
+  if(!v||v==="#REF!"||v==="#N/A")return 0;
   let n=parseFloat(String(v).replace(/[%\s]/g,"").replace(",","."))||0;
   return(n>0&&n<=1)?n*100:n;
 }
@@ -131,15 +138,14 @@ function isJun(v){
   const s=String(v).trim();
   if(s.match(/^\d{2}\/\d{2}\/\d{4}$/))return s.slice(3,5)==="06"&&s.slice(6)==="2026";
   if(s.match(/^\d{2}\/\d{2}\/\d{2}$/))return s.slice(3,5)==="06"&&s.slice(6)==="26";
-  return/jun/i.test(s)||s.includes("06/2026");
+  return false;
 }
 
-async function fetchAba(aba,range="A1:BZ600"){
+async function fetchAba(aba,range){
   const enc=encodeURIComponent(`'${aba}'!${range}`);
   const r=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SID}/values/${enc}?key=${KEY}`);
-  if(!r.ok)throw new Error(`Erro na aba "${aba}": HTTP ${r.status}`);
-  const d=await r.json();
-  return d.values||[];
+  if(!r.ok)throw new Error(`Erro "${aba}": HTTP ${r.status}`);
+  return(await r.json()).values||[];
 }
 
 function msg(m){const e=document.getElementById("lmsg");if(e)e.textContent=m;}
@@ -149,73 +155,99 @@ async function load(){
   document.getElementById("main").style.display="none";
   Object.values(CH).forEach(c=>c&&c.destroy&&c.destroy());CH={};
   try{
-    msg("Buscando Diarização Canal Faturamento...");
-    const rawF=await fetchAba("Diarização Canal Faturamento");
-    msg("Buscando Diarização Canal Vendas...");
-    const rawV=await fetchAba("Diarização Canal Vendas");
-    msg("Processando dados de Junho/2026...");
+    msg("Buscando Canal Faturamento (linhas 596-628)...");
+    const rawF=await fetchAba("Diarização Canal Faturamento","A596:BJ628");
+    msg("Buscando Canal Vendas (linhas 599-631)...");
+    const rawV=await fetchAba("Diarização Canal Vendas","A599:BJ631");
+    msg("Processando dados...");
 
-    // Linhas de dados começam na linha 4 (índice 3) - pula 3 linhas de cabeçalho
-    const rowsF=rawF.slice(3).filter(r=>r[FC.DATA]&&String(r[FC.DATA]).match(/\d{2}\/\d{2}/));
-    const rowsV=rawV.slice(3).filter(r=>r[VC.DATA]&&String(r[VC.DATA]).match(/\d{2}\/\d{2}/));
+    // Faturamento: pula 3 linhas de cabeçalho (596,597,598), dados a partir da 599
+    const rowsF=rawF.slice(3).filter(r=>isJun(r[F.DATA]));
+    // Vendas: pula 3 linhas de cabeçalho (599,600,601), dados a partir da 602
+    const rowsV=rawV.slice(3).filter(r=>isJun(r[V.DATA]));
 
-    // Filtra junho
-    const junF=rowsF.filter(r=>isJun(r[FC.DATA]));
-    const junV=rowsV.filter(r=>isJun(r[VC.DATA]));
+    // Última linha com realizado > 0
+    const comRF=rowsF.filter(r=>$B(r[F.REAL_ACUM])>0);
+    const ult=comRF[comRF.length-1]||rowsF[0]||[];
+    const comRV=rowsV.filter(r=>$B(r[V.REAL_ACUM])>0);
+    const ultV=comRV[comRV.length-1]||rowsV[0]||[];
 
-    const dadosF=junF.length>0?junF:rowsF;
-    const dadosV=junV.length>0?junV:rowsV;
+    // ── KPIs Faturamento ──
+    const metaG=$B(ult[F.META_GERAL]);
+    const realG=$B(ult[F.REAL_ACUM]);
+    const pctG=$P(ult[F.PCT_ACUM])||(metaG>0?(realG/metaG)*100:0);
+    const cmvG=$P(ult[F.CMV_GERAL]);
+    const cmvCD=$P(ult[F.CMV_CD]);
+    const cmvL=$P(ult[F.CMV_LOJAS]);
+    const margem=$P(ult[F.MARGEM]);
+    const ticket=$B(ult[F.TICKET]);
+    const vendaA=$B(ult[F.VENDA_ACUM]);
+    const dataRef=ult[F.DATA]||"";
 
-    // Última linha com realizado > 0 (dado mais recente)
-    const comR=dadosF.filter(r=>$BRL(r[FC.REAL_ACUM])>0);
-    const ult=comR[comR.length-1]||dadosF[0]||[];
+    // ── Canais Faturamento ──
+    const metaCD=$B(ult[F.META_CD]);
+    const realCD=$B(ult[F.REAL_CD]);
+    const pctCD=$P(ult[F.PCT_CD])||(metaCD>0?(realCD/metaCD)*100:0);
+    const metaOUT=$B(ult[F.META_OUT]);
+    const realOUT=$B(ult[F.REAL_OUT]);
+    const pctOUT=$P(ult[F.PCT_OUT])||(metaOUT>0?(realOUT/metaOUT)*100:0);
+    const metaLojas=$B(ult[F.META_LOJAS]);
+    const realLojas=$B(ult[F.REAL_LOJAS]);
+    const pctLojas=$P(ult[F.PCT_LOJAS])||(metaLojas>0?(realLojas/metaLojas)*100:0);
+    const meta1P=$B(ult[F.META_1P]);
+    const real1P=$B(ult[F.REAL_1P]);
+    const pct1P=$P(ult[F.PCT_1P])||(meta1P>0?(real1P/meta1P)*100:0);
 
-    // KPIs principais da última linha com dado
-    const metaG  =$BRL(ult[FC.META_GERAL]);
-    const realG  =$BRL(ult[FC.REAL_ACUM]);
-    const pctG   =$PCT(ult[FC.PCT_ACUM])||(metaG>0?(realG/metaG)*100:0);
-    const difPct =$PCT(ult[FC.DIF_PCT]);
-    const vendaA =$BRL(ult[FC.VENDA_ACUM]);
-    const cmvG   =$PCT(ult[FC.CMV_GERAL]);
-    const cmvCD  =$PCT(ult[FC.CMV_CD]);
-    const cmvL   =$PCT(ult[FC.CMV_LOJAS]);
-    const margem =$PCT(ult[FC.MARGEM]);
-    const ticket =$BRL(ult[FC.TICKET]);
-    const data   =ult[FC.DATA]||"";
-
-    // Evolução diária faturamento
-    const evolF=dadosF.map(r=>({
-      data:String(r[FC.DATA]).slice(0,5),
-      meta:$BRL(r[FC.META_GERAL]),
-      real:$BRL(r[FC.REAL_ACUM]),
-      pct:$PCT(r[FC.PCT_ACUM]),
-      cmv:$PCT(r[FC.CMV_GERAL]),
-    })).filter(e=>e.meta>0||e.real>0);
-
-    // Canal de Vendas - última linha com dado
-    const comRV=dadosV.filter(r=>$BRL(r[VC.REAL_ACUM])>0);
-    const ultV=comRV[comRV.length-1]||dadosV[0]||[];
+    // ── Canal Vendas ──
+    const metaVG=$B(ultV[V.META_GERAL]);
+    const realVG=$B(ultV[V.REAL_ACUM]);
+    const pctVG=$P(ultV[V.PCT_ACUM])||(metaVG>0?(realVG/metaVG)*100:0);
+    const metaLojasG=$B(ultV[V.META_LOJAS_G]);
+    const realLojasG=$B(ultV[V.REAL_LOJAS_G]);
+    const pctLojasG=$P(ultV[V.PCT_LOJAS_G])||(metaLojasG>0?(realLojasG/metaLojasG)*100:0);
+    const metaLojasD=$B(ultV[V.META_LOJAS]);
+    const realLojasD=$B(ultV[V.REAL_LOJAS]);
+    const pctLojasD=$P(ultV[V.PCT_LOJAS])||(metaLojasD>0?(realLojasD/metaLojasD)*100:0);
+    const metaOUTV=$B(ultV[V.META_OUT]);
+    const realOUTV=$B(ultV[V.REAL_OUT]);
+    const pctOUTV=$P(ultV[V.PCT_OUT])||(metaOUTV>0?(realOUTV/metaOUTV)*100:0);
+    const metaApp=$B(ultV[V.META_APP]);
+    const realApp=$B(ultV[V.REAL_APP]);
+    const pctApp=metaApp>0?(realApp/metaApp)*100:0;
 
     const canaisVendas=[
-      {canal:"3.0 Vendas",    meta:$BRL(ultV[VC.META_30]),  real:$BRL(ultV[VC.REAL_30]),  pct:$PCT(ultV[VC.PCT_30])},
-      {canal:"OUT Marketplace",meta:$BRL(ultV[VC.META_OUT]), real:$BRL(ultV[VC.REAL_OUT]), pct:$PCT(ultV[VC.PCT_OUT])},
-      {canal:"App Oscar",     meta:$BRL(ultV[VC.META_APP]),  real:$BRL(ultV[VC.REAL_APP]),  pct:$PCT(ultV[VC.PCT_APP])},
-      {canal:"Site Oscar",    meta:$BRL(ultV[VC.META_SITE]), real:$BRL(ultV[VC.REAL_SITE]), pct:$PCT(ultV[VC.PCT_SITE])},
-      {canal:"Paquetá Calç.", meta:$BRL(ultV[VC.META_PAQ]),  real:$BRL(ultV[VC.REAL_PAQ]),  pct:$PCT(ultV[VC.PCT_PAQ])},
-      {canal:"Paquetá Esp.",  meta:$BRL(ultV[VC.META_PES]),  real:$BRL(ultV[VC.REAL_PES]),  pct:$PCT(ultV[VC.PCT_PES])},
-      {canal:"Diadora OUT",   meta:$BRL(ultV[VC.META_DIA]),  real:$BRL(ultV[VC.REAL_DIA]),  pct:$PCT(ultV[VC.PCT_DIA])},
-    ].map(c=>({...c,gap:c.real-c.meta,pct:c.pct||(c.meta>0?(c.real/c.meta)*100:0)}))
-     .filter(c=>c.meta>0||c.real>0);
+      {canal:"Lojas Oscar Geral",meta:metaLojasG,real:realLojasG,pct:pctLojasG},
+      {canal:"Lojas (Omni/Hubs)", meta:metaLojasD,real:realLojasD,pct:pctLojasD},
+      {canal:"OUT Marketplace",   meta:metaOUTV,  real:realOUTV,  pct:pctOUTV},
+      {canal:"App Oscar",         meta:metaApp,   real:realApp,   pct:pctApp},
+    ].map(c=>({...c,gap:c.real-c.meta})).filter(c=>c.meta>0||c.real>0);
 
-    // Evolução vendas
-    const evolV=dadosV.map(r=>({
-      data:String(r[VC.DATA]).slice(0,5),
-      meta:$BRL(r[VC.META_GERAL]),
-      real:$BRL(r[VC.REAL_ACUM]),
-      pct:$PCT(r[VC.PCT_ACUM]),
-    })).filter(e=>e.meta>0||e.real>0);
+    const canaisFat=[
+      {canal:"CD",          meta:metaCD,   real:realCD,   pct:pctCD},
+      {canal:"OUT Marketp.",meta:metaOUT,  real:realOUT,  pct:pctOUT},
+      {canal:"Lojas Omni",  meta:metaLojas,real:realLojas,pct:pctLojas},
+      {canal:"1P Total",    meta:meta1P,   real:real1P,   pct:pct1P},
+    ].map(c=>({...c,gap:c.real-c.meta})).filter(c=>c.meta>0||c.real>0);
 
-    render({data,metaG,realG,pctG,difPct,vendaA,cmvG,cmvCD,cmvL,margem,ticket,evolF,evolV,canaisVendas,dadosF});
+    // Evolução diária
+    const evolF=rowsF.map(r=>({
+      data:String(r[F.DATA]).slice(0,5),
+      meta:$B(r[F.META_GERAL]),
+      real:$B(r[F.REAL_ACUM]),
+      pct:$P(r[F.PCT_ACUM]),
+      cmv:$P(r[F.CMV_GERAL]),
+      dif:$P(r[F.DIF_PCT]),
+    })).filter(e=>e.meta>0);
+
+    const evolV=rowsV.map(r=>({
+      data:String(r[V.DATA]).slice(0,5),
+      meta:$B(r[V.META_GERAL]),
+      real:$B(r[V.REAL_ACUM]),
+      pct:$P(r[V.PCT_ACUM]),
+    })).filter(e=>e.meta>0);
+
+    render({dataRef,metaG,realG,pctG,cmvG,cmvCD,cmvL,margem,ticket,vendaA,
+            metaVG,realVG,pctVG,canaisFat,canaisVendas,evolF,evolV});
   }catch(e){
     document.getElementById("loading").style.display="none";
     document.getElementById("main").style.display="block";
@@ -228,18 +260,18 @@ async function load(){
 }
 
 function kpi(ic,lb,vl,sb,pt,cr){
-  const c=cr||(pt!==undefined?COR(pt):"#e2e8f0");
+  const c=cr||(pt!==undefined?CR(pt):"#e2e8f0");
   return`<div class="kpi">
     <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${ic} ${lb}</div>
-    <div style="font-size:24px;font-weight:800;color:${c};line-height:1.1">${vl}</div>
+    <div style="font-size:22px;font-weight:800;color:${c};line-height:1.1">${vl}</div>
     ${sb?`<div style="font-size:12px;color:#64748b;margin-top:4px">${sb}</div>`:""}
-    ${pt!==undefined?`<div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px"><span>Atingimento</span><span style="color:${COR(pt)};font-weight:700">${P(pt)}</span></div>
-    <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-top:3px"><div style="width:${Math.min(pt,100)}%;height:6px;border-radius:99px;background:${COR(pt)}"></div></div>`:""}
+    ${pt!==undefined?`<div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:8px"><span>Atingimento</span><span style="color:${CR(pt)};font-weight:700">${P(pt)}</span></div>
+    <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;margin-top:3px"><div style="width:${Math.min(pt,100)}%;height:6px;border-radius:99px;background:${CR(pt)}"></div></div>`:""}
   </div>`;
 }
 
 function cCard(c){
-  const cor=COR(c.pct);
+  const cor=CR(c.pct);
   return`<div style="background:rgba(255,255,255,0.04);border:1px solid ${cor}33;border-radius:14px;padding:16px 18px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div style="font-size:13px;font-weight:700;color:#e2e8f0">${c.canal}</div>
@@ -248,7 +280,7 @@ function cCard(c){
     <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
       <div><div style="font-size:10px;color:#64748b">META</div><div style="font-size:12px;font-weight:600;color:#94a3b8">${R(c.meta)}</div></div>
       <div><div style="font-size:10px;color:#64748b">REALIZADO</div><div style="font-size:12px;font-weight:600;color:#e2e8f0">${R(c.real)}</div></div>
-      <div><div style="font-size:10px;color:#64748b">GAP</div><div style="font-size:12px;font-weight:600;color:${c.gap>=0?OK:ERR}">${c.gap>=0?"+":""}${R(c.gap)}</div></div>
+      <div><div style="font-size:10px;color:#64748b">GAP</div><div style="font-size:12px;font-weight:600;color:${c.gap>=0?OK:ER}">${c.gap>=0?"+":""}${R(c.gap)}</div></div>
     </div>
     <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:5px"><div style="width:${Math.min(c.pct,100)}%;height:5px;border-radius:99px;background:${cor}"></div></div>
   </div>`;
@@ -256,74 +288,83 @@ function cCard(c){
 
 function render(d){
   const hoje=new Date().toLocaleDateString("pt-BR");
-  const {data,metaG,realG,pctG,difPct,vendaA,cmvG,cmvCD,cmvL,margem,ticket,evolF,evolV,canaisVendas,dadosF}=d;
+  const{dataRef,metaG,realG,pctG,cmvG,cmvCD,cmvL,margem,ticket,vendaA,
+        metaVG,realVG,pctVG,canaisFat,canaisVendas,evolF,evolV}=d;
   const falta=metaG-realG;
-  const crit=canaisVendas.filter(c=>c.pct<50);
-  const atenc=canaisVendas.filter(c=>c.pct>=50&&c.pct<80);
-  const dest=canaisVendas.filter(c=>c.pct>=100);
+
+  const todosCanais=[...canaisFat,...canaisVendas];
+  const crit=todosCanais.filter(c=>c.pct<50&&c.meta>0);
+  const atenc=todosCanais.filter(c=>c.pct>=50&&c.pct<80&&c.meta>0);
+  const dest=todosCanais.filter(c=>c.pct>=100&&c.meta>0);
 
   const PAGT=[
-    {name:"Cartão Crédito",pct:37.09,cor:CORES[0]},
-    {name:"FestCard",pct:26.06,cor:CORES[1]},
-    {name:"Pix",pct:22.28,cor:CORES[2]},
-    {name:"Credsystem",pct:5.01,cor:CORES[3]},
-    {name:"Vale",pct:3.11,cor:CORES[4]},
-    {name:"Outros",pct:6.45,cor:CORES[5]},
+    {name:"Cartão Crédito",pct:37.09,cor:CRS[0]},
+    {name:"FestCard",      pct:26.06,cor:CRS[1]},
+    {name:"Pix",           pct:22.28,cor:CRS[2]},
+    {name:"Credsystem",    pct:5.01, cor:CRS[3]},
+    {name:"Vale",          pct:3.11, cor:CRS[4]},
+    {name:"Outros",        pct:6.45, cor:CRS[5]},
   ];
 
   document.getElementById("main").innerHTML=`
   <div class="topo">
     <div>
       <div class="titulo">📊 Dashboard E-commerce · Grupo Oscar</div>
-      <div class="sub">Ref. ${data} · Junho/2026 · Atualizado ${hoje}</div>
+      <div class="sub">Ref. ${dataRef} · Junho/2026 · Atualizado ${hoje}</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <span class="badge badge-g">✓ Google Sheets Live</span>
-      <span class="badge badge-b">📅 Jun/26</span>
+      <span class="badge bg">✓ Google Sheets Live</span>
+      <span class="badge bb">📅 Jun/26</span>
       <button class="btn" onclick="load()">↻ Atualizar</button>
     </div>
   </div>
 
-  <div class="tab-row">
-    <button class="tab on"  id="tb-fat"  onclick="tab('fat')">📈 Faturamento</button>
-    <button class="tab off" id="tb-vend" onclick="tab('vend')">🏪 Canal Vendas</button>
-    <button class="tab off" id="tb-marg" onclick="tab('marg')">💰 Margem</button>
-    <button class="tab off" id="tb-pag"  onclick="tab('pag')">💳 Pagamento</button>
-    <button class="tab off" id="tb-tab"  onclick="tab('tab')">📋 Tabela</button>
+  <div class="tabs">
+    <button class="tab on"  id="tb-fat"  onclick="showTab('fat')">📈 Faturamento</button>
+    <button class="tab off" id="tb-vend" onclick="showTab('vend')">🏪 Canal Vendas</button>
+    <button class="tab off" id="tb-marg" onclick="showTab('marg')">💰 Margem/CMV</button>
+    <button class="tab off" id="tb-pag"  onclick="showTab('pag')">💳 Pagamento</button>
+    <button class="tab off" id="tb-tab"  onclick="showTab('tab')">📋 Tabela</button>
   </div>
 
   <div class="alerta">
-    <div style="font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:10px">🔔 Inteligência do Dia · ${data}</div>
+    <div style="font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:10px">🔔 Inteligência do Dia · ${dataRef}</div>
     <div style="display:flex;flex-wrap:wrap;gap:20px">
-      ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)} (gap ${R(c.gap)})</div>`).join("")}</div>`:""}
+      ${crit.length?`<div><div style="color:#f87171;font-weight:700;font-size:11px;margin-bottom:4px">🚨 CRÍTICO — abaixo de 50%</div>${crit.map(c=>`<div style="color:#fca5a5;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)} · gap ${R(c.gap)}</div>`).join("")}</div>`:""}
       ${atenc.length?`<div><div style="color:#fbbf24;font-weight:700;font-size:11px;margin-bottom:4px">⚠️ ATENÇÃO — 50% a 80%</div>${atenc.map(c=>`<div style="color:#fde68a;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)}</div>`).join("")}</div>`:""}
       ${dest.length?`<div><div style="color:#4ade80;font-weight:700;font-size:11px;margin-bottom:4px">✅ ACIMA DA META</div>${dest.map(c=>`<div style="color:#86efac;font-size:12px;line-height:1.8">• ${c.canal}: ${P(c.pct)}</div>`).join("")}</div>`:""}
-      ${!crit.length&&!atenc.length&&!dest.length?`<div style="color:#94a3b8;font-size:12px">Carregando análise dos canais...</div>`:""}
     </div>
   </div>
 
   <!-- FATURAMENTO -->
   <div class="sec on" id="s-fat">
-    <div class="sl">Faturamento · Acumulado até ${data}</div>
+    <div class="sl">Faturamento Acumulado · até ${dataRef}</div>
     <div class="g3">
       ${kpi("🎯","GMV Realizado",R(realG),`Meta: ${R(metaG)}`,pctG)}
-      ${kpi("⚡","Falta para Meta",R(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante p/ 100%",undefined,falta<=0?OK:ERR)}
-      ${kpi("📊","% Atingimento",P(pctG),`Gap: ${P(difPct)}`,undefined,COR(pctG))}
-      ${kpi("💹","Venda Acumulada",R(vendaA),"Tendência regressão",undefined,"#a5b4fc")}
+      ${kpi("⚡","Falta para Meta",R(Math.abs(falta)),falta<=0?"🟢 Meta batida!":"Restante p/ 100%",undefined,falta<=0?OK:ER)}
+      ${kpi("📊","% Atingimento",P(pctG),`Gap: ${P(pctG-100)}`,undefined,CR(pctG))}
       ${ticket>0?kpi("🎫","Ticket Médio",R(ticket),"Valor médio do pedido",undefined,"#f59e0b"):""}
-      ${kpi("📦","Meta Total Mês",R(metaG),"Meta junho/2026",undefined,"#64748b")}
+      ${vendaA>0?kpi("📦","Venda Acumulada",R(vendaA),"Tendência regressão",undefined,"#a5b4fc"):""}
     </div>
-    <div class="sl">Evolução Diária · Faturamento Junho</div>
+    <div class="sl">Evolução Diária · Meta vs Realizado</div>
     <div class="card"><div style="height:240px"><canvas id="cEvF"></canvas></div></div>
-    <div class="sl">% Atingimento Diário</div>
+    <div class="sl">% Atingimento por Dia</div>
     <div class="card"><div style="height:200px"><canvas id="cPctF"></canvas></div></div>
+    <div class="sl">Canais · Faturamento Acumulado</div>
+    <div class="g2">${canaisFat.map(cCard).join("")}</div>
   </div>
 
   <!-- CANAL VENDAS -->
   <div class="sec" id="s-vend">
-    <div class="sl">Ranking por Canal · Acumulado até ${data}</div>
-    <div class="card"><div style="height:${Math.max(canaisVendas.length*50+40,200)}px"><canvas id="cRank"></canvas></div></div>
-    <div class="sl">Performance Detalhada por Canal</div>
+    <div class="sl">Canal Vendas · Acumulado até ${dataRef}</div>
+    <div class="g3">
+      ${kpi("🛒","GMV Vendas",R(realVG),`Meta: ${R(metaVG)}`,pctVG)}
+      ${kpi("⚡","Falta (Vendas)",R(Math.abs(metaVG-realVG)),metaVG<=realVG?"🟢 Meta batida!":"Restante p/ 100%",undefined,metaVG<=realVG?OK:ER)}
+      ${kpi("📊","% Atingimento",P(pctVG),`Gap: ${P(pctVG-100)}`,undefined,CR(pctVG))}
+    </div>
+    <div class="sl">Ranking por Canal · Vendas</div>
+    <div class="card"><div style="height:${Math.max(canaisVendas.length*52+40,200)}px"><canvas id="cRank"></canvas></div></div>
+    <div class="sl">Performance Detalhada</div>
     <div class="g2">${canaisVendas.map(cCard).join("")}</div>
     <div class="sl">Evolução Diária · Canal Vendas</div>
     <div class="card"><div style="height:220px"><canvas id="cEvV"></canvas></div></div>
@@ -331,29 +372,29 @@ function render(d){
 
   <!-- MARGEM -->
   <div class="sec" id="s-marg">
-    <div class="sl">CMV · Margem Bruta · Ref. ${data}</div>
+    <div class="sl">CMV · Margem Bruta · Ref. ${dataRef}</div>
     <div class="g3">
-      ${[{l:"Geral",cmv:cmvG||42.43},{l:"CD",cmv:cmvCD||42.54},{l:"Lojas",cmv:cmvL||42.40}].map(m=>`
+      ${[{l:"Geral",cmv:cmvG||42.43,mb:margem||57.57},{l:"CD",cmv:cmvCD||42.54,mb:100-(cmvCD||42.54)},{l:"Lojas",cmv:cmvL||42.40,mb:100-(cmvL||42.40)}].map(m=>`
       <div class="kpi">
-        <div style="font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:12px">${m.l}</div>
+        <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:12px">${m.l}</div>
         <div style="display:flex;gap:16px;margin-bottom:12px">
-          <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${ERR}">${P(m.cmv)}</div></div>
-          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${OK}">${P(100-m.cmv)}</div></div>
+          <div><div style="font-size:10px;color:#64748b">CMV</div><div style="font-size:22px;font-weight:800;color:${ER}">${P(m.cmv)}</div></div>
+          <div><div style="font-size:10px;color:#64748b">MARGEM BRUTA</div><div style="font-size:22px;font-weight:800;color:${OK}">${P(m.mb)}</div></div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:99px;height:8px;overflow:hidden">
-          <div style="width:${100-m.cmv}%;height:100%;background:${OK};border-radius:99px"></div>
+          <div style="width:${m.mb}%;height:100%;background:${OK};border-radius:99px"></div>
         </div>
       </div>`).join("")}
     </div>
-    <div class="sl">CMV vs Margem por Canal</div>
+    <div class="sl">CMV vs Margem Bruta por Canal</div>
     <div class="card"><div style="height:220px"><canvas id="cMarg"></canvas></div></div>
-    <div class="sl">Evolução CMV Diária</div>
+    <div class="sl">Evolução do CMV Diário</div>
     <div class="card"><div style="height:200px"><canvas id="cCMV"></canvas></div></div>
   </div>
 
   <!-- PAGAMENTO -->
   <div class="sec" id="s-pag">
-    <div class="sl">Mix de Meios de Pagamento</div>
+    <div class="sl">Mix de Meios de Pagamento · Junho 2026</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
       <div class="card" style="margin-bottom:0"><div style="height:280px"><canvas id="cPag"></canvas></div></div>
       <div>
@@ -365,8 +406,8 @@ function render(d){
             <div style="width:${p.pct}%;height:5px;border-radius:99px;background:${p.cor}"></div>
           </div>
         </div>`).join("")}
-        <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:#a5b4fc;margin-top:4px;line-height:1.6">
-          💡 <strong>Cartão + FestCard</strong> = <strong>63,15%</strong> dos pagamentos<br>Pix em 3º com <strong>22,28%</strong>
+        <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:12px 16px;font-size:12px;color:#a5b4fc;line-height:1.6">
+          💡 <strong>Cartão + FestCard</strong> = <strong>63,15%</strong><br>Pix em 3º com <strong>22,28%</strong>
         </div>
       </div>
     </div>
@@ -374,17 +415,18 @@ function render(d){
 
   <!-- TABELA -->
   <div class="sec" id="s-tab">
-    <div class="sl">Diarização Canal Faturamento · Junho 2026 · ${evolF.length} dias</div>
+    <div class="sl">Diarização Canal Faturamento · ${evolF.length} dias de junho</div>
     <div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
       <table class="t">
-        <thead><tr><th>Data</th><th>Meta Diária</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP R$</th><th>CMV</th></tr></thead>
-        <tbody>${evolF.map(e=>{const g=e.real-e.meta;return`<tr>
-          <td>${e.data}</td>
+        <thead><tr><th>Data</th><th>Dia</th><th>Meta Diária</th><th>Realizado Acum.</th><th>% Atingido</th><th>GAP R$</th><th>CMV</th></tr></thead>
+        <tbody>${evolF.map((e,i)=>{const g=e.real-e.meta;return`<tr style="background:${i%2===0?"transparent":"rgba(255,255,255,0.015)"}">
+          <td style="font-weight:600;color:#e2e8f0">${e.data}</td>
+          <td style="color:#64748b">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][new Date("2026-06-"+e.data.slice(0,2)).getDay()]||""}</td>
           <td>${R(e.meta)}</td>
-          <td>${R(e.real)}</td>
-          <td style="color:${COR(e.pct)};font-weight:700">${P(e.pct)}</td>
-          <td style="color:${g>=0?OK:ERR}">${g>=0?"+":""}${R(g)}</td>
-          <td>${e.cmv>0?P(e.cmv):"-"}</td>
+          <td style="font-weight:600">${R(e.real)}</td>
+          <td style="color:${CR(e.pct)};font-weight:700">${P(e.pct)}</td>
+          <td style="color:${g>=0?OK:ER};font-weight:600">${g>=0?"+":""}${R(g)}</td>
+          <td style="color:${e.cmv>0?"#94a3b8":"#475569"}">${e.cmv>0?P(e.cmv):"-"}</td>
         </tr>`;}).join("")}</tbody>
       </table>
     </div>
@@ -396,62 +438,59 @@ function render(d){
   document.getElementById("main").style.display="block";
 
   const BO={responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:"#94a3b8",font:{size:11}}},tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,titleColor:"#e2e8f0",bodyColor:"#94a3b8"}},
-    scales:{x:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}},y:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}}}};
+    plugins:{legend:{labels:{color:"#94a3b8",font:{size:11}}},
+             tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,titleColor:"#e2e8f0",bodyColor:"#94a3b8"}},
+    scales:{x:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}},
+            y:{ticks:{color:"#64748b",font:{size:10}},grid:{color:"#1e293b"}}}};
 
-  // Evolução faturamento
   if(evolF.length>0){
     CH.evF=new Chart(document.getElementById("cEvF"),{type:"bar",
       data:{labels:evolF.map(e=>e.data),datasets:[
         {label:"Meta",data:evolF.map(e=>e.meta),backgroundColor:"#334155",borderRadius:3},
-        {label:"Realizado",data:evolF.map(e=>e.real),backgroundColor:PRI,borderRadius:3}
+        {label:"Realizado",data:evolF.map(e=>e.real),backgroundColor:PR,borderRadius:3}
       ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
-    // % diário
     CH.pctF=new Chart(document.getElementById("cPctF"),{type:"line",
       data:{labels:evolF.map(e=>e.data),datasets:[
         {label:"% Atingimento",data:evolF.map(e=>e.pct),borderColor:"#6366f1",backgroundColor:"rgba(99,102,241,0.1)",tension:.4,fill:true,pointRadius:3},
-        {label:"Meta 100%",data:evolF.map(()=>100),borderColor:"#334155",borderDash:[5,5],pointRadius:0}
+        {label:"Meta 100%",data:evolF.map(()=>100),borderColor:"#475569",borderDash:[5,5],pointRadius:0}
       ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
   }
 
-  // Ranking canais
   if(canaisVendas.length>0){
-    const sorted=[...canaisVendas].sort((a,b)=>b.pct-a.pct);
+    const srt=[...canaisVendas].sort((a,b)=>b.pct-a.pct);
     CH.rank=new Chart(document.getElementById("cRank"),{type:"bar",
-      data:{labels:sorted.map(c=>c.canal),datasets:[{label:"% Atingido",data:sorted.map(c=>+c.pct.toFixed(1)),backgroundColor:sorted.map(c=>COR(c.pct)),borderRadius:4}]},
+      data:{labels:srt.map(c=>c.canal),datasets:[{label:"% Atingido",data:srt.map(c=>+c.pct.toFixed(1)),backgroundColor:srt.map(c=>CR(c.pct)),borderRadius:4}]},
       options:{...BO,indexAxis:"y",scales:{x:{...BO.scales.x,ticks:{...BO.scales.x.ticks,callback:v=>`${v}%`}},y:{...BO.scales.y,ticks:{color:"#94a3b8",font:{size:11}}}}}});
-    // Evolução vendas
-    if(evolV.length>0){
-      CH.evV=new Chart(document.getElementById("cEvV"),{type:"bar",
-        data:{labels:evolV.map(e=>e.data),datasets:[
-          {label:"Meta",data:evolV.map(e=>e.meta),backgroundColor:"#334155",borderRadius:3},
-          {label:"Realizado",data:evolV.map(e=>e.real),backgroundColor:"#22d3ee",borderRadius:3}
-        ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
-    }
+  }
+  if(evolV.length>0){
+    CH.evV=new Chart(document.getElementById("cEvV"),{type:"bar",
+      data:{labels:evolV.map(e=>e.data),datasets:[
+        {label:"Meta",data:evolV.map(e=>e.meta),backgroundColor:"#334155",borderRadius:3},
+        {label:"Realizado",data:evolV.map(e=>e.real),backgroundColor:"#22d3ee",borderRadius:3}
+      ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>R(v)}}}}});
   }
 
-  // Margem
-  const mD=[{l:"Geral",cmv:cmvG||42.43},{l:"CD",cmv:cmvCD||42.54},{l:"Lojas",cmv:cmvL||42.40}];
+  const mDs=[{l:"Geral",cmv:cmvG||42.43,mb:margem||57.57},{l:"CD",cmv:cmvCD||42.54,mb:100-(cmvCD||42.54)},{l:"Lojas",cmv:cmvL||42.40,mb:100-(cmvL||42.40)}];
   CH.marg=new Chart(document.getElementById("cMarg"),{type:"bar",
-    data:{labels:mD.map(m=>m.l),datasets:[
-      {label:"CMV",data:mD.map(m=>m.cmv),backgroundColor:ERR,borderRadius:4},
-      {label:"Margem Bruta",data:mD.map(m=>+(100-m.cmv).toFixed(2)),backgroundColor:OK,borderRadius:4}
+    data:{labels:mDs.map(m=>m.l),datasets:[
+      {label:"CMV",data:mDs.map(m=>m.cmv),backgroundColor:ER,borderRadius:4},
+      {label:"Margem Bruta",data:mDs.map(m=>m.mb),backgroundColor:OK,borderRadius:4}
     ]},options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,max:100,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
-  // CMV diário
+
   const cmvDia=evolF.filter(e=>e.cmv>0);
   if(cmvDia.length>0){
     CH.cmv=new Chart(document.getElementById("cCMV"),{type:"line",
-      data:{labels:cmvDia.map(e=>e.data),datasets:[{label:"CMV Diário %",data:cmvDia.map(e=>e.cmv),borderColor:ERR,backgroundColor:"rgba(220,38,38,0.1)",tension:.4,fill:true,pointRadius:3}]},
+      data:{labels:cmvDia.map(e=>e.data),datasets:[{label:"CMV %",data:cmvDia.map(e=>e.cmv),borderColor:ER,backgroundColor:"rgba(220,38,38,0.1)",tension:.4,fill:true,pointRadius:3}]},
       options:{...BO,scales:{...BO.scales,y:{...BO.scales.y,ticks:{...BO.scales.y.ticks,callback:v=>`${v}%`}}}}});
   }
 
-  // Pagamento
   CH.pag=new Chart(document.getElementById("cPag"),{type:"doughnut",
     data:{labels:PAGT.map(p=>p.name),datasets:[{data:PAGT.map(p=>p.pct),backgroundColor:PAGT.map(p=>p.cor),borderColor:"#0a0f1e",borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:"#94a3b8",font:{size:11},padding:12}},tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}});
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:"#94a3b8",font:{size:11},padding:12}},
+      tooltip:{backgroundColor:"#1e293b",borderColor:"#334155",borderWidth:1,callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}}});
 }
 
-function tab(t){
+function showTab(t){
   ["fat","vend","marg","pag","tab"].forEach(s=>{
     document.getElementById(`s-${s}`).className="sec"+(s===t?" on":"");
     document.getElementById(`tb-${s}`).className="tab "+(s===t?"on":"off");
@@ -466,7 +505,7 @@ function auth(){
     sessionStorage.setItem("ok","1");
     load();
   }else{
-    document.getElementById("erropwd").style.display="block";
+    document.getElementById("epwd").style.display="block";
     document.getElementById("pwd").value="";
     document.getElementById("pwd").focus();
   }
